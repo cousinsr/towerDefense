@@ -7,18 +7,18 @@ game.PlayScreen = me.ScreenObject.extend({
 		function addRandomEnemy() {
 			var choice = Math.floor(Math.random() * 3) + 1;
             if (choice == 1) {
-				me.game.world.addChild(me.pool.pull("clothedSkeleton", 0, 192));
+				me.game.world.addChild(me.pool.pull("clothedSkeleton", 0, 832));
 			}
             else if (choice == 2) {
-				me.game.world.addChild(me.pool.pull("robedSkeleton", 0, 192));
+				me.game.world.addChild(me.pool.pull("robedSkeleton", 0, 832));
 			}
             else {
-				me.game.world.addChild(me.pool.pull("armoredSkeleton", 0, 192));
+				me.game.world.addChild(me.pool.pull("armoredSkeleton", 0, 832));
 			}
 		}
 		
 		// Load first level * CHANGE LOADLEVEL TO TEST YOUR LEVEL *
-		me.levelDirector.loadLevel("level01");
+		me.levelDirector.loadLevel("level03");
         me.game.world.addChild(new me.ColorLayer("background", "#000000"), 0);
 		
 		// Generate enemies * COMMENT OUT UNTIL YOUR LEVEL IS READY FOR ENEMIES (COLLISION OBJECTS SET UP) *
