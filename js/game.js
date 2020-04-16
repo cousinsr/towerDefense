@@ -1,4 +1,3 @@
-
 /* Game namespace */
 var game = {
 
@@ -30,8 +29,22 @@ var game = {
         me.state.set(me.state.MENU, new game.TitleScreen());
         me.state.set(me.state.PLAY, new game.PlayScreen());
 
-        // add our player entity in the entity pool
+        // Add our player entity in the entity pool
         me.pool.register("mainPlayer", game.PlayerEntity);
+
+        // Add the enemy skeleton objects to the entity pool
+        me.pool.register("clothedSkeleton", game.ClothedSkeleton);
+        me.pool.register("robedSkeleton", game.RobedSkeleton);
+        me.pool.register("armoredSkeleton", game.ArmoredSkeleton);
+		
+        // Add the turn collision objects to the entity pool
+        me.pool.register("DownTurn", game.DownTurn);
+        me.pool.register("UpTurn", game.UpTurn);
+        me.pool.register("RightTurn", game.RightTurn);
+        me.pool.register("LeftTurn", game.LeftTurn);
+
+        // Add the finishing zone to the game
+        me.pool.register("Finish", game.Finish);
 
         // Start the game.
         me.state.change(me.state.PLAY);
