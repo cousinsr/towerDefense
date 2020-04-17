@@ -37,6 +37,13 @@ var game = {
         me.pool.register("robedSkeleton", game.RobedSkeleton);
         me.pool.register("armoredSkeleton", game.ArmoredSkeleton);
 		
+		// Add the tower objects to the entity pool.
+		me.pool.register("redTower", game.RedTower);
+		me.pool.register("greenTower", game.GreenTower);
+		
+		// Add the missile object to the entity pool.
+		me.pool.register("missile", game.Missile);
+		
         // Add the turn collision objects to the entity pool
         me.pool.register("DownTurn", game.DownTurn);
         me.pool.register("UpTurn", game.UpTurn);
@@ -46,6 +53,10 @@ var game = {
         // Add the finishing zone to the game
         me.pool.register("Finish", game.Finish);
 
+		// Enable the keyboard for the tower attack target POC.
+		me.input.bindKey(me.input.KEY.SPACE,  "shoot", true);
+		me.input.unbindKey(me.input.KEY.SPACE);
+		
         // Start the game.
         me.state.change(me.state.PLAY);
     }

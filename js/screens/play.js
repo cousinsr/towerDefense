@@ -17,9 +17,20 @@ game.PlayScreen = me.ScreenObject.extend({
 			}
 		}
 		
+		function addTowers() {
+			me.game.world.addChild(me.pool.pull("redTower", 256, 704));
+			me.game.world.addChild(me.pool.pull("greenTower", 768, 704));
+			me.game.world.addChild(me.pool.pull("greenTower", 384, 960));
+			me.game.world.addChild(me.pool.pull("greenTower", 768, 512));
+		}
+		
 		// Load first level * CHANGE LOADLEVEL TO TEST YOUR LEVEL *
 		me.levelDirector.loadLevel("level03");
         me.game.world.addChild(new me.ColorLayer("background", "#000000"), 0);
+		
+		// Add towers for tower attack POC.
+		// Note: The tower placement is correct only for level03 in this POC.
+		addTowers();
 		
 		// Generate enemies * COMMENT OUT UNTIL YOUR LEVEL IS READY FOR ENEMIES (COLLISION OBJECTS SET UP) *
 		addRandomEnemy();
