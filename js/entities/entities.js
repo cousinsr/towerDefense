@@ -43,6 +43,9 @@ game.ClothedSkeleton = me.Entity.extend(
         // Set the image to the appropriate skeleton
         settings = {};
         settings.image = "clothed_skeleton";
+		
+		// For tower attack POC, set name for this unit since it may serve as target of a tower.
+		settings.name = "killMe";
 
         // Set the size to match the sprite sheet
         settings.framewidth = settings.width = 64;
@@ -137,6 +140,9 @@ game.RobedSkeleton = me.Entity.extend(
         // Set the image to the appropriate skeleton
         settings = {};
         settings.image = "robed_skeleton";
+		
+		// For tower attack POC, set name for this unit since it may serve as target of a tower.
+		settings.name = "killMe";
 
         // Set the size to match the sprite sheet
         settings.framewidth = settings.width = 64;
@@ -224,7 +230,6 @@ game.RobedSkeleton = me.Entity.extend(
     }
 });
 
-
 game.ArmoredSkeleton = me.Entity.extend(
 {
     init: function (x, y)
@@ -232,6 +237,9 @@ game.ArmoredSkeleton = me.Entity.extend(
         // Set the image to the appropriate skeleton
         settings = {};
         settings.image = "armored_skeleton";
+		
+		// For tower attack POC, set name for this unit since it may serve as target of a tower.
+		settings.name = "killMe";
 
         // Set the size to match the sprite sheet
         settings.framewidth = settings.width = 64;
@@ -349,11 +357,11 @@ game.Finish = me.Entity.extend({
     }
 });
 
-game.RedTower = me.Entity.extend(
+game.RocketTower = me.Entity.extend(
 {
     init: function (x, y)
     { 
-        // Set the image to the appropriate tower.
+        // Set the image file.
         settings = {};
         settings.image = "towerDefense";
 
@@ -364,16 +372,14 @@ game.RedTower = me.Entity.extend(
         // Call the parent constructor.
         this._super(me.Entity, 'init', [x, y, settings]);
 
-        // Set animations.
-        this.renderable.addAnimation("exist", [250]);
+        // Set the image to the appropriate tower.
+        this.renderable.addAnimation("exist", [204]);
 
         // Set initial animation
         this.renderable.setCurrentAnimation("exist");
 
-        // Set up initial attributes of this enemy
-        this.speed = 0;
-        this.health = 999;
-        this.orientation = "UP";
+        // Set initial target tracking attributes of this tower.
+        this.lastTargetAngle = 0;
 		this.currentTargetGUID = null;
     },
 
@@ -381,28 +387,108 @@ game.RedTower = me.Entity.extend(
         // Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 
-		// Select 'the first' target in the world that has a name of "killMe" (a green tower).
+		// Select 'the first' target in the world that has a name of "killMe".
 		var targetsArray = me.game.world.getChildByName("killMe");
 		var target = targetsArray[0];
 
-		// Check if the tower needs to be rotated to face a new ["killMe"] target.
+		// Check if the tower needs to be react to a different ["killMe"] target.
 		/* Reference:
-			Code for calculating target angle, rotating using that angle, and moving using that angle is
-			based on code posted by users Ian_ and agmcleod at the forum linked below.
+			Code for calculating target angle, rotating using that angle, and moving to the target using
+			that angle is based on code posted by users Ian_ and agmcleod at the forum linked below, with
+			necessary modifications added for correct functionality in this game.
 			https://www.html5gamedevs.com/topic/34225-shooting-projectiles-in-a-specific-direction/
 		*/
-		if (this.currentTargetGUID != target.GUID) {
+		if (target != null && this.currentTargetGUID != target.GUID) {
 
 			// Calculate the angle of the target relative to this tower.
 			var targetAngle = Math.atan2(target.pos.y - this.pos.y, target.pos.x - this.pos.x);
 			
+			// Reset the tower's rotation if it was previously rotated to face a target.
+			if (this.currentTargetGUID != null) {
+				this.renderable.rotate(-1 * this.lastTargetAngle - 90 * Math.PI / 180);
+			}
+			
 			// Point this tower at the target.
 			this.renderable.rotate(targetAngle + 90 * Math.PI / 180);
+			// Record the latest target angle used to rotate the tower.
+			this.lastTargetAngle = targetAngle;
 			
 			// Update the current target of this tower.
 			this.currentTargetGUID = target.GUID;
 			
-			// Launch a missile at the current target.
+			// Launch a projectile at the current target.
+			me.game.world.addChild(me.pool.pull("missile", this.pos.x, this.pos.y, this.currentTargetGUID));
+		}
+
+        return true;
+    },
+
+	// Tower should not react to a collision.
+	onCollision : function (response) {
+        return false;
+    }
+});
+
+game.RedTower = me.Entity.extend(
+{
+    init: function (x, y)
+    { 
+        // Set the image file.
+        settings = {};
+        settings.image = "towerDefense";
+
+        // Set the size to match the sprite sheet.
+        settings.framewidth = settings.width = 64;
+        settings.frameheight = settings.height = 64;
+
+        // Call the parent constructor.
+        this._super(me.Entity, 'init', [x, y, settings]);
+
+        // Set the image to the appropriate tower.
+        this.renderable.addAnimation("exist", [250]);
+
+        // Set initial animation
+        this.renderable.setCurrentAnimation("exist");
+
+        // Set initial target tracking attributes of this tower.
+		this.lastTargetAngle = 0;
+		this.currentTargetGUID = null;
+    },
+
+    update : function (dt) {
+        // Update the animation appropriately
+        this._super(me.Entity, "update", [dt]);
+
+		// Select 'the first' target in the world that has a name of "killMe".
+		var targetsArray = me.game.world.getChildByName("greenTower");
+		var target = targetsArray[0];
+
+		// Check if the tower needs to be react to a different ["killMe"] target.
+		/* Reference:
+			Code for calculating target angle, rotating using that angle, and moving to the target using
+			that angle is based on code posted by users Ian_ and agmcleod at the forum linked below, with
+			necessary modifications added for correct functionality in this game.
+			https://www.html5gamedevs.com/topic/34225-shooting-projectiles-in-a-specific-direction/
+		*/
+		if (target != null && this.currentTargetGUID != target.GUID) {
+
+			// Calculate the angle of the target relative to this tower.
+			var targetAngle = Math.atan2(target.pos.y - this.pos.y, target.pos.x - this.pos.x);
+			
+			// Reset the tower's rotation if it was previously rotated to face a target.
+			if (this.currentTargetGUID != null) {
+				this.renderable.rotate(-1 * this.lastTargetAngle - 90 * Math.PI / 180);
+			}
+			
+			// Point this tower at the target.
+			this.renderable.rotate(targetAngle + 90 * Math.PI / 180);
+			// Record the latest target angle used to rotate the tower.
+			this.lastTargetAngle = targetAngle;
+			
+			// Update the current target of this tower.
+			this.currentTargetGUID = target.GUID;
+			
+			// Launch a projectile at the current target.
 			me.game.world.addChild(me.pool.pull("missile", this.pos.x, this.pos.y, this.currentTargetGUID));
 		}
 
@@ -419,12 +505,12 @@ game.GreenTower = me.Entity.extend(
 {
     init: function (x, y)
     { 
-        // Set the image to the appropriate tower.
+        // Set the image file.
         settings = {};
         settings.image = "towerDefense";
 		
-		// For tower attack POC, set name for the green tower since it serves as target of red tower.
-		settings.name = "killMe";
+		// For tower attack POC, set name for the green tower since it may serve as target.
+		settings.name = "greenTower";
 
         // Set the size to match the sprite sheet.
         settings.framewidth = settings.width = 64;
@@ -433,16 +519,11 @@ game.GreenTower = me.Entity.extend(
         // Call the parent constructor.
         this._super(me.Entity, 'init', [x, y, settings]);
 
-        // Set animations.
+        // Set the image to the appropriate tower.
         this.renderable.addAnimation("exist", [249]);
 
         // Set initial animation
         this.renderable.setCurrentAnimation("exist");
-
-        // Set up initial attributes of this enemy
-        this.speed = 0;
-        this.health = 999;
-        this.orientation = "UP";
     },
 
     update : function (dt) {
@@ -460,12 +541,9 @@ game.GreenTower = me.Entity.extend(
 game.Missile = me.Entity.extend({
     init : function (x, y, targetGUID)
 	{
-        // Set the image to the appropriate tower.
+        // Set the image file.
         settings = {};
         settings.image = "towerDefense";
-		
-		// For tower attack POC, set name for the green tower since it serves as target of red tower.
-		settings.name = "missile";
 
         // Set the size to match the sprite sheet.
         settings.framewidth = settings.width = 64;
@@ -474,15 +552,20 @@ game.Missile = me.Entity.extend({
         // Call the parent constructor.
         this._super(me.Entity, 'init', [x, y, settings]);
 
-        // Set animations.
+        // Set the image to the appropriate projectile.
         this.renderable.addAnimation("exist", [252]);
 
         // Set initial animation
         this.renderable.setCurrentAnimation("exist");
 
-        // Set up initial attributes of this enemy
-        this.speed = 100;
-        this.damage = 999;
+		// Define physics characteristics of the projectile.
+		// Setting these values appropriately is necessary for the projectile to reach its target.
+		this.body.force.set(1000,1000);
+		this.body.setMaxVelocity(50,50);
+		this.body.friction.set(0,0);
+		this.body.gravity.set(0,0);
+
+		// Set the projectile target and initial rotation (towards target) status.
 		this.targetGUID = targetGUID;
 		this.rotated = false;
     },
@@ -491,28 +574,37 @@ game.Missile = me.Entity.extend({
         // Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 		
-		// Check if the tower needs to be rotated to face a new ["killMe"] target.
+		// Calculate the angle of the target relative to this projectile.
 		/* Reference:
-			Code for calculating target angle, rotating using that angle, and moving using that angle is
-			based on code posted by users Ian_ and agmcleod at the forum linked below.
+			Code for calculating target angle, rotating using that angle, and moving to the target using
+			that angle is based on code posted by users Ian_ and agmcleod at the forum linked below, with
+			necessary modifications added for correct functionality in this game.
 			https://www.html5gamedevs.com/topic/34225-shooting-projectiles-in-a-specific-direction/
 		*/
-		// Calculate the angle of the target relative to this missile.
 		var target = me.game.world.getChildByGUID(this.targetGUID);
-		var targetAngle = Math.atan2(target.pos.y - this.pos.y, target.pos.x - this.pos.x);
+		var targetAngle = 0;
 		
-		// Check if the missile needs to be pointed at the target.
+		// Confirm the target still exists.
+		if (target != null) {
+			targetAngle = Math.atan2(target.pos.y - this.pos.y, target.pos.x - this.pos.x);
+		//The target no longer exists, so remove the projectile from the map.
+		} else {
+			me.game.world.removeChild(this);
+		}
+		
+		// Check if the projectile needs to be pointed at the target.
 		if (this.rotated == false) {
-			// Point this missile at the target.
+			// Point this projectile at the target.
 			this.renderable.rotate(targetAngle + 90 * Math.PI / 180);
-			
 			this.rotated = true;
 		}
 		
-		this.body.setVelocity(Math.cos(targetAngle) * 3, Math.sin(targetAngle) * 3);
-		
-		this.body.vel.x += this.body.accel.x * me.timer.tick;
-		this.body.vel.y += this.body.accel.y * me.timer.tick;
+		// Set the direction and speed of the projectile.
+		/*
+		Increasing the number in a product below will increase the speed of the projectile's movement with
+		respect to that axis.
+		*/
+		this.body.setVelocity(Math.cos(targetAngle) * 5, Math.sin(targetAngle) * 5);
 		
         // Check for collisions
         me.collision.check(this);
@@ -523,8 +615,8 @@ game.Missile = me.Entity.extend({
     },
 	
 	onCollision : function (response) {
-        // Check if the missile hit its target.
-        if (response.b.name == "killMe") {
+        // Check if the projectile hit its target.
+        if (response.b.GUID == this.targetGUID) {
 			// Remove the projectile and the target from the map
             me.game.world.removeChild(response.a);
 			me.game.world.removeChild(response.b);

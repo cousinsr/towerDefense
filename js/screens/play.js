@@ -18,10 +18,14 @@ game.PlayScreen = me.ScreenObject.extend({
 		}
 		
 		function addTowers() {
-			me.game.world.addChild(me.pool.pull("redTower", 256, 704));
+			me.game.world.addChild(me.pool.pull("rocketTower", 896, 256));
+			me.game.world.addChild(me.pool.pull("redTower", 512, 704));
 			me.game.world.addChild(me.pool.pull("greenTower", 768, 704));
 			me.game.world.addChild(me.pool.pull("greenTower", 384, 960));
 			me.game.world.addChild(me.pool.pull("greenTower", 768, 512));
+			me.game.world.addChild(me.pool.pull("greenTower", 256, 704));
+			me.game.world.addChild(me.pool.pull("greenTower", 512, 512));
+			me.game.world.addChild(me.pool.pull("greenTower", 1024, 512));
 		}
 		
 		// Load first level * CHANGE LOADLEVEL TO TEST YOUR LEVEL *
@@ -34,7 +38,7 @@ game.PlayScreen = me.ScreenObject.extend({
 		
 		// Generate enemies * COMMENT OUT UNTIL YOUR LEVEL IS READY FOR ENEMIES (COLLISION OBJECTS SET UP) *
 		addRandomEnemy();
-        me.timer.setInterval(addRandomEnemy, 5000, true);
+        me.timer.setInterval(addRandomEnemy, 1000, true);
 		
         // reset the score
         game.data.score = 0;
