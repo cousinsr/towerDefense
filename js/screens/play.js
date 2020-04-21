@@ -5,7 +5,6 @@ game.PlayScreen = me.ScreenObject.extend({
         function addRandomEnemy() {
             var choice = Math.floor(Math.random() * 3) + 1;
             if (choice == 1) {
-<<<<<<< HEAD
                 me.game.world.addChild(me.pool.pull("clothedSkeleton", 0, 192));
             }
             else if (choice == 2) {
@@ -18,20 +17,6 @@ game.PlayScreen = me.ScreenObject.extend({
 
         // Load first level with a black background covering the default melonJS background
         me.levelDirector.loadLevel("level01");
-=======
-				me.game.world.addChild(me.pool.pull("clothedSkeleton", 0, 832));
-			}
-            else if (choice == 2) {
-				me.game.world.addChild(me.pool.pull("robedSkeleton", 0, 832));
-			}
-            else {
-				me.game.world.addChild(me.pool.pull("armoredSkeleton", 0, 832));
-			}
-		}
-		
-		// Load first level * CHANGE LOADLEVEL TO TEST YOUR LEVEL *
-		me.levelDirector.loadLevel("level03");
->>>>>>> c2e20fb5d701b7c97d7ea1725da82c26f33d4228
         me.game.world.addChild(new me.ColorLayer("background", "#000000"), 0);
 		
 		// Generate random enemies every five seconds
@@ -55,3 +40,4 @@ game.PlayScreen = me.ScreenObject.extend({
         me.game.world.removeChild(this.HUD);
     }
 });
+
