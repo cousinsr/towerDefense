@@ -35,18 +35,10 @@
  <objectgroup id="7" name="Turn Objects">
   <object id="2" name="DownTurn" x="192" y="576" width="64" height="64"/>
   <object id="3" name="DownTurn" x="768" y="192" width="64" height="64"/>
-  <object id="4" name="DownTurn" x="704" y="256" width="64" height="64"/>
-  <object id="5" name="DownTurn" x="832" y="128" width="64" height="64"/>
-  <object id="6" name="DownTurn" x="256" y="512" width="64" height="64"/>
-  <object id="7" name="DownTurn" x="128" y="640" width="64" height="64"/>
   <object id="8" name="LeftTurn" x="704" y="640" width="64" height="64"/>
-  <object id="10" name="LeftTurn" x="768" y="704" width="64" height="64"/>
-  <object id="11" name="LeftTurn" x="640" y="576" width="64" height="64"/>
-  <object id="12" name="RightTurn" x="192" y="1088" width="64" height="64"/>
   <object id="13" name="RightTurn" x="258.924" y="1021.43" width="64" height="64"/>
-  <object id="14" name="RightTurn" x="320" y="960" width="64" height="64"/>
  </objectgroup>
  <objectgroup id="8" name="Finish Line">
-  <object id="15" name="Finish" x="1312" y="960" width="8" height="64"/>
+  <object id="15" name="Finish" x="1296" y="960" width="64" height="64"/>
  </objectgroup>
 </map>
