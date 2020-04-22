@@ -1,16 +1,17 @@
-game.ExplodeTower = me.Entity.extend({
-    init: function (x, y, settings) {
+game.ExplodeTower = me.Entity.extend(
+{
+    init: function (x, y, settings)
+    {
         // Update settings:
         //  - tower image
         //  - client (tile) height/width
         // NOTE - the current image in /data/img/towers is a placeholder
-        // and will need to be replaced. 
+        // and will need to be replaced.
         settings.image = "explodeTower";
-        settings.framewidth = 64;
-        settings.frameheight = 64;
+        settings.framewidth = TILE_WIDTH;
+        settings.frameheight = TILE_HEIGHT;
 
         // Construct and postion tower in the center of tower node.
         this._super(me.Entity, "init", [x, y, settings]);
-        this.anchorPoint.set(0.5,0.5);
     }
 });
