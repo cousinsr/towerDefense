@@ -47,9 +47,6 @@ var game = {
         // Add the finishing zone to the game
         me.pool.register("Finish", game.Finish);
 
-        // Add an object for testing skeleton deaths (ONLY NEEDED FOR TESTING)	
-        me.pool.register("DeathTest", game.DeathTest);
-
         // Start the game.
         me.state.change(me.state.PLAY);
     }

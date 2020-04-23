@@ -80,10 +80,7 @@ game.Skeleton = me.Entity.extend(
         this.health = health;
         this.orientation = "RIGHT";
         this.dyingImage = "hurt_" + skeletonImage;
-
-        
-        //ATTRIBUTE ONLY NEEDED FOR TESTING ENTITY DEATH
-        this.ignore = null;
+        this.alive = true;
     },
 
     update : function (dt) {
@@ -108,7 +105,8 @@ game.Skeleton = me.Entity.extend(
         me.collision.check(this);
 
         // Check for entity death
-        if (this.health <= 0) {
+        if (this.health <= 0 & this.alive) {
+            this.alive = false;
             me.game.world.addChild(me.pool.pull("dyingSkeleton", this.pos.x, this.pos.y, this.dyingImage));
             me.game.world.removeChild(this);
         }
@@ -116,43 +114,34 @@ game.Skeleton = me.Entity.extend(
         return true;
     },
 
-	onCollision : function (response) {
+    onCollision : function (response) {
         // If appropriate, turn to walk down the map and change orientation
         if (response.b.name == "DownTurn" && this.orientation != "DOWN") {
             this.orientation = "DOWN";
             this.renderable.setCurrentAnimation("walkDown");
-			return false;
+            return false;
         }
         // If appropriate, turn to walk up the map and change orientation
         if (response.b.name == "UpTurn" && this.orientation != "UP") {
             this.orientation = "UP";
             this.renderable.setCurrentAnimation("walkUp");
-			return false;
+            return false;
         }
         // If appropriate, turn to walk left on the map and change orientation
         if (response.b.name == "LeftTurn" && this.orientation != "LEFT") {
             this.orientation = "LEFT";
             this.renderable.setCurrentAnimation("walkLeft");
-			return false;
+            return false;
         }
         // If appropriate, turn to walk right on the map and change orientation
         if (response.b.name == "RightTurn" && this.orientation != "RIGHT") {
             this.orientation = "RIGHT";
             this.renderable.setCurrentAnimation("walkRight");
-			return false;
+            return false;
         }
         // Leave the map when reaching the end of the path
         if (response.b.name == "Finish") {
             me.game.world.removeChild(this);
-			return false;
-        }
-        // CONDITIONAL ONLY NEEDED TO TEST ENTITY DEATH
-        if (response.b.name == "DeathTest") {
-            // Cause one point of damage
-            if (this.ignore != response.b) {
-                this.health-= 1;
-            }
-            this.ignore = response.b;
             return false;
         }
 
@@ -251,6 +240,9 @@ game.DyingSkeleton = me.Entity.extend(
         // Create and set animation
         this.renderable.addAnimation("die", [0, 1, 2, 3, 4, 5, 5, 5, 5, 5], 200);
         this.renderable.setCurrentAnimation("die");
+		
+		// Cause it to flicker for the first 1000 ms
+        this.renderable.flicker(1000);
 
         // Set up countdown as a timer (in milliseconds) before the entity is removed
         this.countdown = 1400;
@@ -306,15 +298,6 @@ game.RightTurn = me.Entity.extend({
  * indicate where a skeleton entity leaves the path.
  ********************************************************************/
 game.Finish = me.Entity.extend({
-    init: function (x, y, settings) {
-        this._super(me.Entity, 'init', [x, y , settings]);
-    }
-});
-
-/********************************************************************
- * CLASS ONLY NEEDED FOR TESTING ENTITY DEATH
- ********************************************************************/
-game.DeathTest = me.Entity.extend({
     init: function (x, y, settings) {
         this._super(me.Entity, 'init', [x, y , settings]);
     }
