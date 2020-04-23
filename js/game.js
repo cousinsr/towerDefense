@@ -44,7 +44,8 @@ var game = {
         me.pool.register("RightTurn", game.RightTurn);
         me.pool.register("LeftTurn", game.LeftTurn);
 
-        // Add the finishing zone to the game
+        // Add the spawn point and finishing zone to the game
+        me.pool.register("Start", game.Start);
         me.pool.register("Finish", game.Finish);
 
         // Start the game.

@@ -116,27 +116,47 @@ game.Skeleton = me.Entity.extend(
 
     onCollision : function (response) {
         // If appropriate, turn to walk down the map and change orientation
-        if (response.b.name == "DownTurn" && this.orientation != "DOWN") {
+        if (response.b.pos.y == this.pos.y && response.b.name == "DownTurn" && this.orientation != "DOWN") {
+            var modifier = 8;
+            if (this.orientation == "RIGHT") {
+                modifier = -64;
+            }
             this.orientation = "DOWN";
             this.renderable.setCurrentAnimation("walkDown");
+            this.pos.x = response.b.pos.x + modifier;
             return false;
         }
         // If appropriate, turn to walk up the map and change orientation
-        if (response.b.name == "UpTurn" && this.orientation != "UP") {
+        if (response.b.pos.y == this.pos.y && response.b.name == "UpTurn" && this.orientation != "UP") {
+            var modifier = 8;
+            if (this.orientation == "RIGHT") {
+                modifier = -64;
+            }
             this.orientation = "UP";
             this.renderable.setCurrentAnimation("walkUp");
+            this.pos.x = response.b.pos.x + modifier;
             return false;
         }
         // If appropriate, turn to walk left on the map and change orientation
-        if (response.b.name == "LeftTurn" && this.orientation != "LEFT") {
+        if (response.b.pos.x == this.pos.x && response.b.name == "LeftTurn" && this.orientation != "LEFT") {
+            var modifier = 8;
+            if (this.orientation == "DOWN") {
+                modifier = -64;
+            }
             this.orientation = "LEFT";
             this.renderable.setCurrentAnimation("walkLeft");
+            this.pos.y = response.b.pos.y + modifier;
             return false;
         }
         // If appropriate, turn to walk right on the map and change orientation
-        if (response.b.name == "RightTurn" && this.orientation != "RIGHT") {
+        if (response.b.pos.x == this.pos.x && response.b.name == "RightTurn" && this.orientation != "RIGHT") {
+            var modifier = 8;
+            if (this.orientation == "DOWN") {
+                modifier = -64;
+            }
             this.orientation = "RIGHT";
             this.renderable.setCurrentAnimation("walkRight");
+            this.pos.y = response.b.pos.y + modifier;
             return false;
         }
         // Leave the map when reaching the end of the path
@@ -294,9 +314,15 @@ game.RightTurn = me.Entity.extend({
 });
 
 /********************************************************************
- * This class simply allows Tiled to include a finish object to
- * indicate where a skeleton entity leaves the path.
+ * This class simply allows Tiled to include start and finish objects
+ * to indicate where a skeleton entity enters and leaves the path.
  ********************************************************************/
+game.Start = me.Entity.extend({
+    init: function (x, y, settings) {
+        this._super(me.Entity, 'init', [x, y , settings]);
+    }
+});
+
 game.Finish = me.Entity.extend({
     init: function (x, y, settings) {
         this._super(me.Entity, 'init', [x, y , settings]);

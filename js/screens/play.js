@@ -1,27 +1,38 @@
 game.PlayScreen = me.ScreenObject.extend({
 	
     onResetEvent: function() {
-        //Function to add one of the three different skeleton types at random
-        function addRandomEnemy() {
-            var choice = Math.floor(Math.random() * 3) + 1;
-            if (choice == 1) {
-                me.game.world.addChild(me.pool.pull("clothedSkeleton", 0, 192));
+        // Add chosen enemy to one of three paths
+        function addToRandomPath(enemyName, x, y) {
+            var randomNum = Math.floor(Math.random() * 3);
+            if (randomNum >= 3) {
+                randomNum = 2;
             }
-            else if (choice == 2) {
-                me.game.world.addChild(me.pool.pull("robedSkeleton", 0, 192));
+            me.game.world.addChild(me.pool.pull(enemyName, x, y - (24 * randomNum)));
+        }
+
+        // Add one of the passed enemies at random
+        function addRandomEnemy(enemyArray, spawnPoint) {
+            var numChoices = enemyArray.length;
+            var choice = Math.floor(Math.random() * numChoices);
+            if (choice >= numChoices) {
+                choice = numChoices - 1;
             }
-            else {
-                me.game.world.addChild(me.pool.pull("armoredSkeleton", 0, 192));
+            for (var i = 0; i < numChoices; i++) {
+                if (choice == i) {
+                    addToRandomPath(enemyArray[choice], spawnPoint.pos.x, spawnPoint.pos.y);
+                }
             }
         }
 
         // Load first level with a black background covering the default melonJS background
         me.levelDirector.loadLevel("level01");
-        me.game.world.addChild(new me.ColorLayer("background", "#000000"), 0);
+        me.game.world.addChild(new me.ColorLayer("background", "#373737"), 0);
 		
 		// Generate random enemies every five seconds
-        addRandomEnemy();
-        me.timer.setInterval(addRandomEnemy, 5000, true);
+        var spawnPoint = me.game.world.getChildByProp("name", "Start");
+        var enemies = ["clothedSkeleton", "robedSkeleton", "armoredSkeleton"];
+        addRandomEnemy(enemies, spawnPoint[0]);
+        me.timer.setInterval(addRandomEnemy, 5000, true, enemies, spawnPoint[0]);
 		
         // FROM BOILERPLATE: Reset the score
         game.data.score = 0;
