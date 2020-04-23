@@ -1,6 +1,6 @@
-/**
- * Player Entity
- */
+/********************************************************************
+ * Player Entity from the Boilerplate
+ ********************************************************************/
 game.PlayerEntity = me.Entity.extend({
 
     /**
@@ -36,13 +36,28 @@ game.PlayerEntity = me.Entity.extend({
     }
 });
 
-game.ClothedSkeleton = me.Entity.extend(
+/********************************************************************
+ * Class for a Skeleton Entity
+ *
+ * Parameters: x is the x position where the object will be created,
+ * and y is the y position; skeletonImage is the name of a 64x64 sprite
+ * sheet for this in /data/img/sprites; speed is the number of pixels
+ * the entity will move in one second; health is an integer indicating
+ * the number of life points the entity begins the game with.
+ *
+ * This entity is used as a superclass for other skeleton entities,
+ * which are the main enemies in the game.
+ *
+ * IMPORTANT NOTE: There must be another sprite sheet for the skeleton
+ * death, and it must be named "hurt_" + the string passed in the
+ * skeletonImage parameter.
+ ********************************************************************/
+game.Skeleton = me.Entity.extend(
 {
-    init: function (x, y)
-    { 
+    init: function (x, y, skeletonImage, speed, health) { 
         // Set the image to the appropriate skeleton
         settings = {};
-        settings.image = "clothed_skeleton";
+        settings.image = skeletonImage;
 
         // Set the size to match the sprite sheet
         settings.framewidth = settings.width = 64;
@@ -52,29 +67,27 @@ game.ClothedSkeleton = me.Entity.extend(
         this._super(me.Entity, 'init', [x, y, settings]);
 
         // Set animations
-        this.renderable.addAnimation("standRight", [27]);
         this.renderable.addAnimation("walkRight", [27, 28, 29, 30, 31, 32, 33, 34, 35], 75);
-        this.renderable.addAnimation("standDown", [18]);
         this.renderable.addAnimation("walkDown", [18, 19, 20, 21, 22, 23, 24, 25, 26], 75);
-        this.renderable.addAnimation("standLeft", [9]);
         this.renderable.addAnimation("walkLeft", [9, 10, 11, 12, 13, 14, 15, 16, 17], 75);
-        this.renderable.addAnimation("standUp", [0]);
         this.renderable.addAnimation("walkUp", [0, 1, 2, 3, 4, 5, 6, 7, 8], 75);
 
-        // Set initial animation
+        // Set initial animation, as all our levels begin on the left side of the screen
         this.renderable.setCurrentAnimation("walkRight");
 
         // Set up initial attributes of this enemy
-        this.speed = 250;
-        this.health = 4;
+        this.speed = speed;
+        this.health = health;
         this.orientation = "RIGHT";
+        this.dyingImage = "hurt_" + skeletonImage;
+        this.alive = true;
     },
 
     update : function (dt) {
         // Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 
-        // Move in the appropriate direction
+        // Move entity in the appropriate direction
         if (this.orientation == "RIGHT") {
             this.pos.x += this.speed * dt/1000;
         }
@@ -91,52 +104,151 @@ game.ClothedSkeleton = me.Entity.extend(
         // Check for collisions
         me.collision.check(this);
 
+        // Check for entity death
+        if (this.health <= 0 & this.alive) {
+            this.alive = false;
+            me.game.world.addChild(me.pool.pull("dyingSkeleton", this.pos.x, this.pos.y, this.dyingImage));
+            me.game.world.removeChild(this);
+        }
+
         return true;
     },
 
-	onCollision : function (response) {
-        // Turn to walk down the map
-        if (response.b.name == "DownTurn" && this.orientation != "DOWN") {
+    onCollision : function (response) {
+        // If appropriate, turn to walk down the map and change orientation
+        if (response.b.pos.y == this.pos.y && response.b.name == "DownTurn" && this.orientation != "DOWN") {
+            var modifier = 8;
+            if (this.orientation == "RIGHT") {
+                modifier = -64;
+            }
             this.orientation = "DOWN";
             this.renderable.setCurrentAnimation("walkDown");
-			return false;
+            this.pos.x = response.b.pos.x + modifier;
+            return false;
         }
-        // Turn to walk up the map
-        if (response.b.name == "UpTurn" && this.orientation != "UP") {
+        // If appropriate, turn to walk up the map and change orientation
+        if (response.b.pos.y == this.pos.y && response.b.name == "UpTurn" && this.orientation != "UP") {
+            var modifier = 8;
+            if (this.orientation == "RIGHT") {
+                modifier = -64;
+            }
             this.orientation = "UP";
             this.renderable.setCurrentAnimation("walkUp");
-			return false;
+            this.pos.x = response.b.pos.x + modifier;
+            return false;
         }
-        // Turn to walk left on the map
-        if (response.b.name == "LeftTurn" && this.orientation != "LEFT") {
+        // If appropriate, turn to walk left on the map and change orientation
+        if (response.b.pos.x == this.pos.x && response.b.name == "LeftTurn" && this.orientation != "LEFT") {
+            var modifier = 8;
+            if (this.orientation == "DOWN") {
+                modifier = -64;
+            }
             this.orientation = "LEFT";
             this.renderable.setCurrentAnimation("walkLeft");
-			return false;
+            this.pos.y = response.b.pos.y + modifier;
+            return false;
         }
-        // Turn to walk right on the map
-        if (response.b.name == "RightTurn" && this.orientation != "RIGHT") {
+        // If appropriate, turn to walk right on the map and change orientation
+        if (response.b.pos.x == this.pos.x && response.b.name == "RightTurn" && this.orientation != "RIGHT") {
+            var modifier = 8;
+            if (this.orientation == "DOWN") {
+                modifier = -64;
+            }
             this.orientation = "RIGHT";
             this.renderable.setCurrentAnimation("walkRight");
-			return false;
+            this.pos.y = response.b.pos.y + modifier;
+            return false;
         }
-        // Leave the map
+        // Leave the map when reaching the end of the path
         if (response.b.name == "Finish") {
-            // Remove the skeleton from the end of the map
-            me.game.world.removeChild(response.a);
-			return false;
+            me.game.world.removeChild(this);
+            return false;
         }
 
         return false;
     }
 });
 
-game.RobedSkeleton = me.Entity.extend(
+/********************************************************************
+ * Class for a Clothed Skeleton Entity
+ *
+ * Parameters: x is the x position where the object will be created,
+ * and y is the y position.
+ *
+ * This is the fast but weak enemy used in the game.
+ ********************************************************************/
+game.ClothedSkeleton = game.Skeleton.extend(
 {
     init: function (x, y)
     { 
+        // Set the attributes for calling the constructor
+        var speed = 200;
+        var health = 4;
+
+        // Call the parent constructor
+        this._super(game.Skeleton, 'init', [x, y, "clothed_skeleton", speed, health]);
+    }
+});
+
+/********************************************************************
+ * Class for a Robed Skeleton Entity
+ *
+ * Parameters: x is the x position where the object will be created,
+ * and y is the y position.
+ *
+ * This is the medium speed, medium health enemy used in the game.
+ ********************************************************************/
+game.RobedSkeleton = game.Skeleton.extend(
+{
+    init: function (x, y)
+    { 
+        // Set the attributes for calling the constructor
+        var speed = 150;
+        var health = 8;
+
+        // Call the parent constructor
+        this._super(game.Skeleton, 'init', [x, y, "robed_skeleton", speed, health]);
+    }
+});
+
+/********************************************************************
+ * Class for a Armored Skeleton Entity
+ *
+ * Parameters: x is the x position where the object will be created,
+ * and y is the y position.
+ *
+ * This is the slow speed, high health enemy used in the game.
+ ********************************************************************/
+game.ArmoredSkeleton = game.Skeleton.extend(
+{
+    init: function (x, y)
+    { 
+        // Set the attributes for calling the constructor
+        var speed = 100;
+        var health = 12;
+
+        // Call the parent constructor
+        this._super(game.Skeleton, 'init', [x, y, "armored_skeleton", speed, health]);
+    }
+});
+
+/********************************************************************
+ * Class for a Dying Skeleton Entity
+ *
+ * Parameters: x is the x position where the object will be created,
+ * and y is the y position; dyingSkeletonImage is the name of a 64x64
+ * sprite sheet for this in /data/img/sprites showing character death.
+ *
+ * This entity takes the place of Skeleton objects when their health
+ * reaches 0 in the game.
+ ********************************************************************/
+game.DyingSkeleton = me.Entity.extend(
+{	
+    init: function (x, y, dyingSkeletonImage)
+    { 
         // Set the image to the appropriate skeleton
         settings = {};
-        settings.image = "robed_skeleton";
+        settings.image = dyingSkeletonImage;
 
         // Set the size to match the sprite sheet
         settings.framewidth = settings.width = 64;
@@ -145,180 +257,38 @@ game.RobedSkeleton = me.Entity.extend(
         // Call the parent constructor
         this._super(me.Entity, 'init', [x, y, settings]);
 
-        // Set animations
-        this.renderable.addAnimation("standRight", [27]);
-        this.renderable.addAnimation("walkRight", [27, 28, 29, 30, 31, 32, 33, 34, 35], 100);
-        this.renderable.addAnimation("standDown", [18]);
-        this.renderable.addAnimation("walkDown", [18, 19, 20, 21, 22, 23, 24, 25, 26], 100);
-        this.renderable.addAnimation("standLeft", [9]);
-        this.renderable.addAnimation("walkLeft", [9, 10, 11, 12, 13, 14, 15, 16, 17], 100);
-        this.renderable.addAnimation("standUp", [0]);
-        this.renderable.addAnimation("walkUp", [0, 1, 2, 3, 4, 5, 6, 7, 8], 100);
+        // Create and set animation
+        this.renderable.addAnimation("die", [0, 1, 2, 3, 4, 5, 5, 5, 5, 5], 200);
+        this.renderable.setCurrentAnimation("die");
+		
+		// Cause it to flicker for the first 1000 ms
+        this.renderable.flicker(1000);
 
-        // Set initial animation
-        this.renderable.setCurrentAnimation("walkRight");
-
-        // Set up initial attributes of this enemy
-        this.speed = 175;
-        this.health = 8;
-        this.orientation = "RIGHT";
+        // Set up countdown as a timer (in milliseconds) before the entity is removed
+        this.countdown = 1400;
     },
 
     update : function (dt) {
         // Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
+		
+        // Update countdown
+        this.countdown -= dt;
 
-        // Move in the appropriate direction
-        if (this.orientation == "RIGHT") {
-            this.pos.x += this.speed * dt/1000;
+        // Remove the entity after the countdown reaches 0
+        if (this.countdown <= 0) {
+            me.game.world.removeChild(this);
         }
-        else if (this.orientation == "DOWN") {
-            this.pos.y += this.speed * dt/1000;
-        }
-        else if (this.orientation == "LEFT") {
-            this.pos.x -= this.speed * dt/1000;
-        }
-        else if (this.orientation == "UP") {
-            this.pos.y -= this.speed * dt/1000;
-        }
-
-        // Check for collisions
-        me.collision.check(this);
 
         return true;
-    },
-
-	onCollision : function (response) {
-        // Turn to walk down the map
-        if (response.b.name == "DownTurn" && this.orientation != "DOWN") {
-            this.orientation = "DOWN";
-            this.renderable.setCurrentAnimation("walkDown");
-			return false;
-        }
-        // Turn to walk up the map
-        if (response.b.name == "UpTurn" && this.orientation != "UP") {
-            this.orientation = "UP";
-            this.renderable.setCurrentAnimation("walkUp");
-			return false;
-        }
-        // Turn to walk left on the map
-        if (response.b.name == "LeftTurn" && this.orientation != "LEFT") {
-            this.orientation = "LEFT";
-            this.renderable.setCurrentAnimation("walkLeft");
-			return false;
-        }
-        // Turn to walk right on the map
-        if (response.b.name == "RightTurn" && this.orientation != "RIGHT") {
-            this.orientation = "RIGHT";
-            this.renderable.setCurrentAnimation("walkRight");
-			return false;
-        }
-        // Leave the map
-        if (response.b.name == "Finish") {
-            // Remove the skeleton from the end of the map
-            me.game.world.removeChild(response.a);
-			return false;
-        }
-
-        return false;
     }
 });
 
-
-game.ArmoredSkeleton = me.Entity.extend(
-{
-    init: function (x, y)
-    { 
-        // Set the image to the appropriate skeleton
-        settings = {};
-        settings.image = "armored_skeleton";
-
-        // Set the size to match the sprite sheet
-        settings.framewidth = settings.width = 64;
-        settings.frameheight = settings.height = 64;
-
-        // Call the parent constructor
-        this._super(me.Entity, 'init', [x, y, settings]);
-
-        // Set animations
-        this.renderable.addAnimation("standRight", [27]);
-        this.renderable.addAnimation("walkRight", [27, 28, 29, 30, 31, 32, 33, 34, 35], 125);
-        this.renderable.addAnimation("standDown", [18]);
-        this.renderable.addAnimation("walkDown", [18, 19, 20, 21, 22, 23, 24, 25, 26], 125);
-        this.renderable.addAnimation("standLeft", [9]);
-        this.renderable.addAnimation("walkLeft", [9, 10, 11, 12, 13, 14, 15, 16, 17], 125);
-        this.renderable.addAnimation("standUp", [0]);
-        this.renderable.addAnimation("walkUp", [0, 1, 2, 3, 4, 5, 6, 7, 8], 125);
-
-        // Set initial animation
-        this.renderable.setCurrentAnimation("walkRight");
-
-        // Set up initial attributes of this enemy
-        this.speed = 100;
-        this.health = 12;
-        this.orientation = "RIGHT";
-    },
-
-    update : function (dt) {
-        // Update the animation appropriately
-        this._super(me.Entity, "update", [dt]);
-
-        // Move in the appropriate direction
-        if (this.orientation == "RIGHT") {
-            this.pos.x += this.speed * dt/1000;
-        }
-        else if (this.orientation == "DOWN") {
-            this.pos.y += this.speed * dt/1000;
-        }
-        else if (this.orientation == "LEFT") {
-            this.pos.x -= this.speed * dt/1000;
-        }
-        else if (this.orientation == "UP") {
-            this.pos.y -= this.speed * dt/1000;
-        }
-
-        // Check for collisions
-        me.collision.check(this);
-
-        return true;
-    },
-
-	onCollision : function (response) {
-        // Turn to walk down the map
-        if (response.b.name == "DownTurn" && this.orientation != "DOWN") {
-            this.orientation = "DOWN";
-            this.renderable.setCurrentAnimation("walkDown");
-			return false;
-        }
-        // Turn to walk up the map
-        if (response.b.name == "UpTurn" && this.orientation != "UP") {
-            this.orientation = "UP";
-            this.renderable.setCurrentAnimation("walkUp");
-			return false;
-        }
-        // Turn to walk left on the map
-        if (response.b.name == "LeftTurn" && this.orientation != "LEFT") {
-            this.orientation = "LEFT";
-            this.renderable.setCurrentAnimation("walkLeft");
-			return false;
-        }
-        // Turn to walk right on the map
-        if (response.b.name == "RightTurn" && this.orientation != "RIGHT") {
-            this.orientation = "RIGHT";
-            this.renderable.setCurrentAnimation("walkRight");
-			return false;
-        }
-        // Leave the map
-        if (response.b.name == "Finish") {
-            // Remove the skeleton from the end of the map
-            me.game.world.removeChild(response.a);
-			return false;
-        }
-
-        return false;
-    }
-});
-
+/********************************************************************
+ * The four classes below simply allow Tiled to include turn objects
+ * to be used to set up the path for skeleton entities to take through
+ * the map in the game.
+ ********************************************************************/
 game.DownTurn = me.Entity.extend({
     init: function (x, y, settings) {
         this._super(me.Entity, 'init', [x, y , settings]);
@@ -338,6 +308,16 @@ game.LeftTurn = me.Entity.extend({
 });
 
 game.RightTurn = me.Entity.extend({
+    init: function (x, y, settings) {
+        this._super(me.Entity, 'init', [x, y , settings]);
+    }
+});
+
+/********************************************************************
+ * This class simply allows Tiled to include start and finish objects
+ * to indicate where a skeleton entity enters and leaves the path.
+ ********************************************************************/
+game.Start = me.Entity.extend({
     init: function (x, y, settings) {
         this._super(me.Entity, 'init', [x, y , settings]);
     }
