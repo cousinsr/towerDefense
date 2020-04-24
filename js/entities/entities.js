@@ -386,61 +386,89 @@ game.RedTower = me.Entity.extend(
         // Set initial animation
         this.renderable.setCurrentAnimation("exist");
 		
-		// Set tower attack speed and range attributes.
+		// Set attack cooldown variables.
+		this.cooldownActive = false;
+		this.cooldownDuration = 2000; // Milliseconds
+		this.cooldownTimeCount = 0; // Milliseconds
+		
+		// Set attack range variable.
 		this.range = 4 * 64; // Range = rangeMultipler * tileSize
 		
-        // Set initial target tracking variables.
+        // Set target tracking variables.
 		this.lastTargetAngle = 0;
 		this.currentTargetGUID = null;
     },
 
     update : function (dt) {
-        // Update the animation appropriately
+		// Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 
-		// Find all targets in the world that have a name of "killMe".
-		var targetsArray = me.game.world.getChildByName("killMe");
-		
-		// Select the closest target within range of the tower.
-		var target = null;
-		var i, shortestTargetDistance = this.range + 7;
-		for (i = 0; i < targetsArray.length; i++) {
-			targetDistance = Math.sqrt(
-				Math.pow(targetsArray[i].pos.x - this.pos.x, 2) +
-				Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
-			);
+		/*
+		If the tower has an active cooldown, increment the cooldown time tracker and check if the
+		cooldown period is over.
+		*/
+		if (this.cooldownActive) {
+			this.cooldownTimeCount += dt;
+			if (this.cooldownTimeCount >= this.cooldownDuration) {
+				this.cooldownActive = false;
+			}
+		}
+
+		// Tower should only look for and attack targets if it is not in cooldown.
+		if (this.cooldownActive == false) {
+			// Find all targets in the world that have a name of "killMe".
+			var targetsArray = me.game.world.getChildByName("killMe");
 			
-			// Check if the target is within range and closer to this tower than previously checked targets.
-			if ((targetDistance <= this.range) && (targetDistance < shortestTargetDistance)) {
-				shortestTargetDistance = targetDistance;
-				target = targetsArray[i];
+			// Select the closest target within range of the tower.
+			var target = null;
+			var i, shortestTargetDistance = this.range + 7;
+			for (i = 0; i < targetsArray.length; i++) {
+				targetDistance = Math.sqrt(
+					Math.pow(targetsArray[i].pos.x - this.pos.x, 2) +
+					Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
+				);
+				
+				/*
+				Check if the target is within range and closer to this tower than previously
+				checked targets.
+				*/
+				if ((targetDistance <= this.range) && (targetDistance < shortestTargetDistance)) {
+					shortestTargetDistance = targetDistance;
+					target = targetsArray[i];
+				}
+			}
+			
+			// Check if the tower needs to be react to a different ["killMe"] target.
+			if (target != null && this.currentTargetGUID != target.GUID) {
+
+				// Calculate the angle of the target relative to this tower.
+				var targetAngle = Math.atan2(target.pos.y - this.pos.y, target.pos.x - this.pos.x);
+				
+				// Reset the tower's rotation if it was previously rotated to face a target.
+				if (this.currentTargetGUID != null) {
+					this.renderable.rotate(-1 * this.lastTargetAngle - 90 * Math.PI / 180);
+					console.log("tower rotate time delta = " + me.timer.getDelta());
+				}
+				
+				// Point this tower at the target.
+				this.renderable.rotate(targetAngle + 90 * Math.PI / 180);
+				// Record the latest target angle used to rotate the tower.
+				this.lastTargetAngle = targetAngle;
+				
+				// Update the current target of this tower.
+				this.currentTargetGUID = target.GUID;
+				
+				// Launch a projectile at the current target.
+				me.game.world.addChild(
+					me.pool.pull("missile", this.pos.x, this.pos.y, this.currentTargetGUID)
+				);
+				
+				this.cooldownActive = true;
+				this.cooldownTimeCount = 0;
 			}
 		}
 		
-		// Check if the tower needs to be react to a different ["killMe"] target.
-		if (target != null && this.currentTargetGUID != target.GUID) {
-
-			// Calculate the angle of the target relative to this tower.
-			var targetAngle = Math.atan2(target.pos.y - this.pos.y, target.pos.x - this.pos.x);
-			
-			// Reset the tower's rotation if it was previously rotated to face a target.
-			if (this.currentTargetGUID != null) {
-				this.renderable.rotate(-1 * this.lastTargetAngle - 90 * Math.PI / 180);
-			}
-			
-			// Point this tower at the target.
-			this.renderable.rotate(targetAngle + 90 * Math.PI / 180);
-			// Record the latest target angle used to rotate the tower.
-			this.lastTargetAngle = targetAngle;
-			
-			// Update the current target of this tower.
-			this.currentTargetGUID = target.GUID;
-			
-			// Launch a projectile at the current target.
-			me.game.world.addChild(me.pool.pull("missile", this.pos.x, this.pos.y, this.currentTargetGUID));
-		}
-
-        return true;
+		return true;
     },
 
 	// Tower should not react to a collision.
@@ -517,7 +545,7 @@ game.Missile = me.Entity.extend({
 		Increasing the number in a product below will increase the speed of the projectile's movement with
 		respect to that axis.
 		*/
-		this.body.setVelocity(Math.cos(targetAngle) * 3, Math.sin(targetAngle) * 3);
+		this.body.setVelocity(Math.cos(targetAngle) * 5, Math.sin(targetAngle) * 5);
 		
         // Check for collisions
         me.collision.check(this);
