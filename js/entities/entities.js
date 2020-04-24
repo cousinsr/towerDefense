@@ -357,78 +357,14 @@ game.Finish = me.Entity.extend({
     }
 });
 
-game.RocketTower = me.Entity.extend(
-{
-    init: function (x, y)
-    { 
-        // Set the image file.
-        settings = {};
-        settings.image = "towerDefense";
 
-        // Set the size to match the sprite sheet.
-        settings.framewidth = settings.width = 64;
-        settings.frameheight = settings.height = 64;
-
-        // Call the parent constructor.
-        this._super(me.Entity, 'init', [x, y, settings]);
-
-        // Set the image to the appropriate tower.
-        this.renderable.addAnimation("exist", [204]);
-
-        // Set initial animation
-        this.renderable.setCurrentAnimation("exist");
-
-        // Set initial target tracking attributes of this tower.
-        this.lastTargetAngle = 0;
-		this.currentTargetGUID = null;
-    },
-
-    update : function (dt) {
-        // Update the animation appropriately
-        this._super(me.Entity, "update", [dt]);
-
-		// Select 'the first' target in the world that has a name of "killMe".
-		var targetsArray = me.game.world.getChildByName("killMe");
-		var target = targetsArray[0];
-
-		// Check if the tower needs to be react to a different ["killMe"] target.
-		/* Reference:
-			Code for calculating target angle, rotating using that angle, and moving to the target using
-			that angle is based on code posted by users Ian_ and agmcleod at the forum linked below, with
-			necessary modifications added for correct functionality in this game.
-			https://www.html5gamedevs.com/topic/34225-shooting-projectiles-in-a-specific-direction/
-		*/
-		if (target != null && this.currentTargetGUID != target.GUID) {
-
-			// Calculate the angle of the target relative to this tower.
-			var targetAngle = Math.atan2(target.pos.y - this.pos.y, target.pos.x - this.pos.x);
-			
-			// Reset the tower's rotation if it was previously rotated to face a target.
-			if (this.currentTargetGUID != null) {
-				this.renderable.rotate(-1 * this.lastTargetAngle - 90 * Math.PI / 180);
-			}
-			
-			// Point this tower at the target.
-			this.renderable.rotate(targetAngle + 90 * Math.PI / 180);
-			// Record the latest target angle used to rotate the tower.
-			this.lastTargetAngle = targetAngle;
-			
-			// Update the current target of this tower.
-			this.currentTargetGUID = target.GUID;
-			
-			// Launch a projectile at the current target.
-			me.game.world.addChild(me.pool.pull("missile", this.pos.x, this.pos.y, this.currentTargetGUID));
-		}
-
-        return true;
-    },
-
-	// Tower should not react to a collision.
-	onCollision : function (response) {
-        return false;
-    }
-});
-
+/*
+Reference:
+Code for calculating target angle, rotating using that angle, and moving a projectile to the target using
+that angle is based on code posted by users Ian_ and agmcleod at the forum linked below, with
+necessary modifications added for correct functionality in this game.
+https://www.html5gamedevs.com/topic/34225-shooting-projectiles-in-a-specific-direction/
+*/
 game.RedTower = me.Entity.extend(
 {
     init: function (x, y)
@@ -449,8 +385,11 @@ game.RedTower = me.Entity.extend(
 
         // Set initial animation
         this.renderable.setCurrentAnimation("exist");
-
-        // Set initial target tracking attributes of this tower.
+		
+		// Set tower attack speed and range attributes.
+		this.range = 4 * 64; // Range = rangeMultipler * tileSize
+		
+        // Set initial target tracking variables.
 		this.lastTargetAngle = 0;
 		this.currentTargetGUID = null;
     },
@@ -459,17 +398,26 @@ game.RedTower = me.Entity.extend(
         // Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 
-		// Select 'the first' target in the world that has a name of "killMe".
-		var targetsArray = me.game.world.getChildByName("greenTower");
-		var target = targetsArray[0];
-
+		// Find all targets in the world that have a name of "killMe".
+		var targetsArray = me.game.world.getChildByName("killMe");
+		
+		// Select the closest target within range of the tower.
+		var target = null;
+		var i, shortestTargetDistance = this.range + 7;
+		for (i = 0; i < targetsArray.length; i++) {
+			targetDistance = Math.sqrt(
+				Math.pow(targetsArray[i].pos.x - this.pos.x, 2) +
+				Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
+			);
+			
+			// Check if the target is within range and closer to this tower than previously checked targets.
+			if ((targetDistance <= this.range) && (targetDistance < shortestTargetDistance)) {
+				shortestTargetDistance = targetDistance;
+				target = targetsArray[i];
+			}
+		}
+		
 		// Check if the tower needs to be react to a different ["killMe"] target.
-		/* Reference:
-			Code for calculating target angle, rotating using that angle, and moving to the target using
-			that angle is based on code posted by users Ian_ and agmcleod at the forum linked below, with
-			necessary modifications added for correct functionality in this game.
-			https://www.html5gamedevs.com/topic/34225-shooting-projectiles-in-a-specific-direction/
-		*/
 		if (target != null && this.currentTargetGUID != target.GUID) {
 
 			// Calculate the angle of the target relative to this tower.
@@ -501,43 +449,14 @@ game.RedTower = me.Entity.extend(
     }
 });
 
-game.GreenTower = me.Entity.extend(
-{
-    init: function (x, y)
-    { 
-        // Set the image file.
-        settings = {};
-        settings.image = "towerDefense";
-		
-		// For tower attack POC, set name for the green tower since it may serve as target.
-		settings.name = "greenTower";
 
-        // Set the size to match the sprite sheet.
-        settings.framewidth = settings.width = 64;
-        settings.frameheight = settings.height = 64;
-
-        // Call the parent constructor.
-        this._super(me.Entity, 'init', [x, y, settings]);
-
-        // Set the image to the appropriate tower.
-        this.renderable.addAnimation("exist", [249]);
-
-        // Set initial animation
-        this.renderable.setCurrentAnimation("exist");
-    },
-
-    update : function (dt) {
-        // Update the animation appropriately
-        this._super(me.Entity, "update", [dt]);
-
-        return true;
-    },
-
-	onCollision : function (response) {
-        return false;
-    }
-});
-
+/*
+Reference:
+Code for calculating target angle, rotating using that angle, and moving a projectile to the target using
+that angle is based on code posted by users Ian_ and agmcleod at the forum linked below, with
+necessary modifications added for correct functionality in this game.
+https://www.html5gamedevs.com/topic/34225-shooting-projectiles-in-a-specific-direction/
+*/
 game.Missile = me.Entity.extend({
     init : function (x, y, targetGUID)
 	{
@@ -575,12 +494,6 @@ game.Missile = me.Entity.extend({
         this._super(me.Entity, "update", [dt]);
 		
 		// Calculate the angle of the target relative to this projectile.
-		/* Reference:
-			Code for calculating target angle, rotating using that angle, and moving to the target using
-			that angle is based on code posted by users Ian_ and agmcleod at the forum linked below, with
-			necessary modifications added for correct functionality in this game.
-			https://www.html5gamedevs.com/topic/34225-shooting-projectiles-in-a-specific-direction/
-		*/
 		var target = me.game.world.getChildByGUID(this.targetGUID);
 		var targetAngle = 0;
 		
@@ -604,7 +517,7 @@ game.Missile = me.Entity.extend({
 		Increasing the number in a product below will increase the speed of the projectile's movement with
 		respect to that axis.
 		*/
-		this.body.setVelocity(Math.cos(targetAngle) * 5, Math.sin(targetAngle) * 5);
+		this.body.setVelocity(Math.cos(targetAngle) * 3, Math.sin(targetAngle) * 3);
 		
         // Check for collisions
         me.collision.check(this);
