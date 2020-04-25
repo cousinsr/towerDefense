@@ -36,8 +36,10 @@ var game = {
         me.pool.register("clothedSkeleton", game.ClothedSkeleton);
         me.pool.register("robedSkeleton", game.RobedSkeleton);
         me.pool.register("armoredSkeleton", game.ArmoredSkeleton);
-		    me.pool.register("dyingSkeleton", game.DyingSkeleton);
+        me.pool.register("dyingSkeleton", game.DyingSkeleton);
 
+        // Add the entity that manages waves within a level
+        me.pool.register("waveManager", game.WaveManager);
 
         // Add the turn collision objects to the entity pool
         me.pool.register("DownTurn", game.DownTurn);
