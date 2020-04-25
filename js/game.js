@@ -38,7 +38,8 @@ var game = {
         me.pool.register("armoredSkeleton", game.ArmoredSkeleton);
 		
 		// Add the tower objects to the entity pool.
-		me.pool.register("redTower", game.RedTower);
+		me.pool.register("basicRangedAttackTower", game.BasicRangedAttackTower);
+		me.pool.register("bomberTower", game.BomberTower);
 		
 		// Add the missile object to the entity pool.
 		me.pool.register("missile", game.Missile);
