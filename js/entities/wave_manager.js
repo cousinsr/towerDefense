@@ -15,7 +15,10 @@
  ********************************************************************/
 game.WaveManager = me.Entity.extend({
     init: function (enemies, counts, gaps, spawnPoints) {
+        // Call the parent constructor
         this._super(me.Entity, 'init', [0, 0, {width: 16, height: 16}]);
+
+        // Set up necessary attributes for the wave manager
         this.enemies = enemies;
         this.counts = counts;
         this.gaps = gaps;
@@ -26,33 +29,42 @@ game.WaveManager = me.Entity.extend({
 		this.timeBeforeNextEnemy = gaps[0] * 1000;
     },
     update : function (dt) {
+        // Update timer
         this.timeBeforeNextEnemy -= dt;
+
+        // Add an enemy if the timer has reached 0
         if (this.timeBeforeNextEnemy <= 0) {
+            // Update timer and enemy count
             this.timeBeforeNextEnemy = 1000;
             this.enemiesRemaining -= 1;
+            // Choose a random enemy from the enemies available this wave
             var numEnemyChoices = this.enemies[this.wave - 1].length;
             var enemyChoice = Math.floor(Math.random() * numEnemyChoices);
             if (enemyChoice >= numEnemyChoices) {
                 enemyChoice = numEnemyChoices - 1;
             }
+            // Choose a random spawn point from those available on the map
             var numSpawnChoices = this.spawnPoints.length;
             var spawnChoice = Math.floor(Math.random() * numSpawnChoices);
             if (spawnChoice >= numSpawnChoices) {
                 spawnChoice = numSpawnChoices - 1;
             }
+            // Add the chosen enemy on one of three paths from the chosen spawn point
             var randomNum = Math.floor(Math.random() * 3);
             if (randomNum >= 3) {
                 randomNum = 2;
             }
             me.game.world.addChild(me.pool.pull(this.enemies[this.wave - 1][enemyChoice], this.spawnPoints[spawnChoice].pos.x, this.spawnPoints[spawnChoice].pos.y - (24 * randomNum)));
         }
+        // Prepare for the upcoming wave if the current wave is complete and there are waves remaining
         if (this.enemiesRemaining <= 0 && this.wave < this.numWaves) {
             this.timeBeforeNextEnemy = this.gaps[this.wave] * 1000;
             this.enemiesRemaining = this.counts[this.wave];
             this.wave += 1;
         }
+        // Remove the wave manager from the game if all enemies have been added
         if (this.enemiesRemaining <= 0 && this.wave >= this.numWaves) {
             me.game.world.removeChild(this);
-        }		
+        }
     }
 });
