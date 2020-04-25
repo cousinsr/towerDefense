@@ -381,7 +381,7 @@ game.BasicRangedAttackTower = me.Entity.extend(
         this._super(me.Entity, 'init', [x, y, settings]);
 
         // Set the image to the appropriate tower.
-        this.renderable.addAnimation("exist", [250]);
+        this.renderable.addAnimation("exist", [249]);
 
         // Set initial animation
         this.renderable.setCurrentAnimation("exist");
@@ -403,10 +403,8 @@ game.BasicRangedAttackTower = me.Entity.extend(
 		// Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 
-		/*
-		If the tower has an active cooldown, increment the cooldown time tracker and check if the
-		cooldown period is over.
-		*/
+		// If the tower has an active cooldown, increment the cooldown time tracker and check if the
+		// cooldown period is over.
 		if (this.cooldownActive) {
 			this.cooldownTimeCount += dt;
 			if (this.cooldownTimeCount >= this.cooldownDuration) {
@@ -449,10 +447,8 @@ game.BasicRangedAttackTower = me.Entity.extend(
 						Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
 					);
 					
-					/*
-					Check if the target is within range and closer to this tower than previously
-					checked targets.
-					*/
+					// Check if the target is within range and closer to this tower than previously
+					// checked targets.
 					if ((targetDistance <= this.range) && (targetDistance < shortestTargetDistance)) {
 						shortestTargetDistance = targetDistance;
 						target = targetsArray[i];
@@ -565,10 +561,8 @@ game.Missile = me.Entity.extend({
 		}
 		
 		// Set the direction and speed of the projectile.
-		/*
-		Increasing the number in a product below will increase the speed of the projectile's movement with
-		respect to that axis.
-		*/
+		// Increasing the number in a product below will increase the speed of the projectile's movement
+		// with	respect to that axis.
 		this.body.setVelocity(Math.cos(targetAngle) * 6, Math.sin(targetAngle) * 6);
 		
         // Check for collisions
@@ -586,25 +580,24 @@ game.Missile = me.Entity.extend({
 			me.game.world.removeChild(response.a);
 			// Lower the health of the target.
 			response.b.health -= this.damage;
-			/*
-			Remove the target from the map if appropriate. Otherwise, have the target flicker if it took
-			damage but is still alive following this collision.
-			This is a temporary means of removing the target given this POC works with older enemy code.
-			Once this POC is merged with master, removal of targets with 0 health will most likely be
-			done by enemy object code.
-			*/
+			// Remove the target from the map if appropriate. Otherwise, have the target flicker if it took
+			// damage but is still alive following this collision.
+			// This is a temporary means of removing the target given this POC works with older enemy code.
+			// Once this POC is merged with master, removal of targets with 0 health will most likely be
+			// done by enemy object code.
 			if (response.b.health <= 0) {
 				me.game.world.removeChild(response.b);
 			} else {
 				response.b.renderable.flicker(500);
 			}
 			
-			return false;
+			return true;
         }
 
         return false;
     }
 });
+
 
 /*
 Reference:
@@ -613,7 +606,7 @@ that angle is based on code posted by users Ian_ and agmcleod at the forum linke
 necessary modifications added for correct functionality in this game.
 https://www.html5gamedevs.com/topic/34225-shooting-projectiles-in-a-specific-direction/
 */
-game.BomberTower = me.Entity.extend(
+game.ExplosiveDamageTower = me.Entity.extend(
 {
     init: function (x, y)
     { 
@@ -629,18 +622,19 @@ game.BomberTower = me.Entity.extend(
         this._super(me.Entity, 'init', [x, y, settings]);
 
         // Set the image to the appropriate tower.
-        this.renderable.addAnimation("exist", [250]);
+        this.renderable.addAnimation("exist", [226]);
 
         // Set initial animation
         this.renderable.setCurrentAnimation("exist");
 		
 		// Set attack cooldown variables.
 		this.cooldownActive = false;
-		this.cooldownDuration = 2000; // Milliseconds
+		this.cooldownDuration = 4000; // Milliseconds
 		this.cooldownTimeCount = 0; // Milliseconds
 		
-		// Set attack range variable.
-		this.range = 4 * 64; // Range = rangeMultipler * tileSize
+		// Set tower attack range and bomb explosion radius variables.
+		this.range = 8 * 64; // Range = rangeMultipler * tileSize
+		this.explosionRadius = 4 * 64;
 		
         // Set target tracking variables.
 		this.lastTargetAngle = 0;
@@ -651,10 +645,8 @@ game.BomberTower = me.Entity.extend(
 		// Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 
-		/*
-		If the tower has an active cooldown, increment the cooldown time tracker and check if the
-		cooldown period is over.
-		*/
+		// If the tower has an active cooldown, increment the cooldown time tracker and check if the
+		// cooldown period is over.
 		if (this.cooldownActive) {
 			this.cooldownTimeCount += dt;
 			if (this.cooldownTimeCount >= this.cooldownDuration) {
@@ -664,11 +656,12 @@ game.BomberTower = me.Entity.extend(
 
 		// Tower should only look for and attack targets if it is not in cooldown.
 		if (this.cooldownActive == false) {
+			var target = null;
+			
 			// Find all targets in the world that have a name of "killMe".
 			var targetsArray = me.game.world.getChildByName("killMe");
 			
 			// Select the closest target within range of the tower.
-			var target = null;
 			var i, shortestTargetDistance = this.range + 7;
 			for (i = 0; i < targetsArray.length; i++) {
 				targetDistance = Math.sqrt(
@@ -676,10 +669,8 @@ game.BomberTower = me.Entity.extend(
 					Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
 				);
 				
-				/*
-				Check if the target is within range and closer to this tower than previously
-				checked targets.
-				*/
+				// Check if the target is within range and closer to this tower than previously
+				// checked targets.
 				if ((targetDistance <= this.range) && (targetDistance < shortestTargetDistance)) {
 					shortestTargetDistance = targetDistance;
 					target = targetsArray[i];
@@ -702,9 +693,14 @@ game.BomberTower = me.Entity.extend(
 				// Record the latest target angle used to rotate the tower.
 				this.lastTargetAngle = targetAngle;
 				
-				// Launch a projectile at the current target.
+				// Set a static marker for the target's current position.
+				var targetPosition = me.game.world.addChild(
+					me.pool.pull("positionMarker", target.pos.x, target.pos.y)
+				);
+				
+				// Launch a projectile at the target's current position marker.
 				me.game.world.addChild(
-					me.pool.pull("missile", this.pos.x, this.pos.y, target.GUID)
+					me.pool.pull("bomb", this.pos.x, this.pos.y, targetPosition.GUID, this.explosionRadius)
 				);
 				
 				// Track the latest target of this tower.
@@ -724,3 +720,428 @@ game.BomberTower = me.Entity.extend(
         return false;
     }
 });
+
+
+game.PositionMarker = me.Entity.extend(
+{
+    init: function (x, y)
+    { 
+        // Set the image file.
+        settings = {};
+        settings.image = "towerDefense";
+
+        // Set the size to match the sprite sheet.
+        settings.framewidth = settings.width = 64;
+        settings.frameheight = settings.height = 64;
+
+        // Call the parent constructor.
+        this._super(me.Entity, 'init', [x, y, settings]);
+
+		// Set animations.
+        this.renderable.addAnimation("positionMarked", [22]);
+
+        // Set initial animation.
+        this.renderable.setCurrentAnimation("positionMarked");
+    },
+
+    update : function (dt) {
+		// Update the animation appropriately
+        this._super(me.Entity, "update", [dt]);
+		
+		return true;
+    },
+
+	onCollision : function (response) {
+        return false;
+    }
+});
+
+
+/*
+Reference:
+Code for calculating target angle, rotating using that angle, and moving a projectile to the target using
+that angle is based on code posted by users Ian_ and agmcleod at the forum linked below, with
+necessary modifications added for correct functionality in this game.
+https://www.html5gamedevs.com/topic/34225-shooting-projectiles-in-a-specific-direction/
+*/
+game.Bomb = me.Entity.extend({
+    init : function (x, y, targetGUID, explosionRadius)
+	{
+        // Set the image file.
+        settings = {};
+        settings.image = "towerDefense";
+
+        // Set the size to match the sprite sheet.
+        settings.framewidth = settings.width = 64;
+        settings.frameheight = settings.height = 64;
+
+        // Call the parent constructor.
+        this._super(me.Entity, 'init', [x, y, settings]);
+
+        // Set the image to the appropriate projectile.
+        this.renderable.addAnimation("exist", [297]);
+
+        // Set initial animation
+        this.renderable.setCurrentAnimation("exist");
+
+		// Define physics characteristics of the projectile.
+		// Setting these values appropriately is necessary for the projectile to reach its target.
+		this.body.force.set(1000,1000);
+		this.body.setMaxVelocity(50,50);
+		this.body.friction.set(0,0);
+		this.body.gravity.set(0,0);
+
+		this.damage = 8;
+
+		// Set the projectile target and initial rotation (towards target) status.
+		this.targetGUID = targetGUID;
+		this.rotated = false;
+		
+		// Set the explosion radius of this bomb.
+		this.explosionRadius = explosionRadius;
+    },
+
+    update : function (dt) {
+        // Update the animation appropriately
+        this._super(me.Entity, "update", [dt]);
+		
+		// Calculate the angle of the target relative to this projectile.
+		var target = me.game.world.getChildByGUID(this.targetGUID);
+		var targetAngle = 0;
+		
+		// Confirm the target still exists.
+		if (target != null) {
+			targetAngle = Math.atan2(target.pos.y - this.pos.y, target.pos.x - this.pos.x);
+		//The target no longer exists, so remove the projectile from the map.
+		} else {
+			me.game.world.removeChild(this);
+		}
+		
+		// Check if the projectile needs to be pointed at the target.
+		if (this.rotated == false) {
+			// Point this projectile at the target.
+			this.renderable.rotate(targetAngle + 90 * Math.PI / 180);
+			this.rotated = true;
+		}
+		
+		// Set the direction and speed of the projectile.
+		// Increasing the number in a product below will increase the speed of the projectile's movement
+		// with	respect to that axis.
+		this.body.setVelocity(Math.cos(targetAngle) * 10, Math.sin(targetAngle) * 10);
+		
+        // Check for collisions
+        me.collision.check(this);
+		
+		this.body.update(dt);
+
+        return true;
+    },
+	
+	onCollision : function (response) {
+        // Check if the projectile hit its target.
+        if (response.b.GUID == this.targetGUID) {
+			// Remove the projectile and position marker from the map.
+			me.game.world.removeChild(response.a);
+			me.game.world.removeChild(response.b);
+			
+			// Find all targets in the world that have a name of "killMe".
+			var targetsArray = me.game.world.getChildByName("killMe");
+			
+			// Distribute damage to each target within the bomb's explosion radius.
+			var i;
+			for (i = 0; i < targetsArray.length; i++) {
+				targetDistance = Math.sqrt(
+					Math.pow(targetsArray[i].pos.x - this.pos.x, 2) +
+					Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
+				);
+				
+				// Check if the target is within the bomb's explosion radius.
+				if (targetDistance <= this.explosionRadius) {
+					// Lower the health of the target.
+					targetsArray[i].health -= this.damage;
+					// Remove the target from the map if appropriate. Otherwise, have the target flicker if
+					// it took	damage but is still alive following this collision.
+					// This is a temporary means of removing the target given this POC works with older
+					// enemy code. Once this POC is merged with master, removal of targets with 0 health
+					// will most likely be done by enemy object code.
+					if (targetsArray[i].health <= 0) {
+						me.game.world.removeChild(targetsArray[i]);
+					} else {
+						targetsArray[i].renderable.flicker(500);
+					}
+				}
+			}
+			
+			return true;
+        }
+
+        return false;
+    }
+});
+
+
+/*
+Reference:
+Code for calculating target angle, rotating using that angle, and moving a projectile to the target using
+that angle is based on code posted by users Ian_ and agmcleod at the forum linked below, with
+necessary modifications added for correct functionality in this game.
+https://www.html5gamedevs.com/topic/34225-shooting-projectiles-in-a-specific-direction/
+*/
+/*
+game.StunTower = me.Entity.extend(
+{
+    init: function (x, y)
+    { 
+        // Set the image file.
+        settings = {};
+        settings.image = "towerDefense";
+
+        // Set the size to match the sprite sheet.
+        settings.framewidth = settings.width = 64;
+        settings.frameheight = settings.height = 64;
+
+        // Call the parent constructor.
+        this._super(me.Entity, 'init', [x, y, settings]);
+
+        // Set the image to the appropriate tower.
+        this.renderable.addAnimation("exist", [226]);
+
+        // Set initial animation
+        this.renderable.setCurrentAnimation("exist");
+		
+		// Set attack cooldown variables.
+		this.cooldownActive = false;
+		this.cooldownDuration = 4000; // Milliseconds
+		this.cooldownTimeCount = 0; // Milliseconds
+		
+		// Set tower attack range and bomb explosion radius variables.
+		this.range = 8 * 64; // Range = rangeMultipler * tileSize
+		this.explosionRadius = 2.5 * 64;
+		
+        // Set target tracking variables.
+		this.lastTargetAngle = 0;
+		this.lastTargetGUID = null;
+    },
+
+    update : function (dt) {
+		// Update the animation appropriately
+        this._super(me.Entity, "update", [dt]);
+
+		// If the tower has an active cooldown, increment the cooldown time tracker and check if the
+		// cooldown period is over.
+		if (this.cooldownActive) {
+			this.cooldownTimeCount += dt;
+			if (this.cooldownTimeCount >= this.cooldownDuration) {
+				this.cooldownActive = false;
+			}
+		}
+
+		// Tower should only look for and attack targets if it is not in cooldown.
+		if (this.cooldownActive == false) {
+			// Find all targets in the world that have a name of "killMe".
+			var targetsArray = me.game.world.getChildByName("killMe");
+			
+			// Select the targets within range of the tower.
+			var target = null;
+			var targetsInRangeGUIDs = [];
+			var i, shortestTargetDistance = this.range + 7;
+			for (i = 0; i < targetsArray.length; i++) {
+				targetDistance = Math.sqrt(
+					Math.pow(targetsArray[i].pos.x - this.pos.x, 2) +
+					Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
+				);
+				
+				//Check if the target is within range.
+				if (targetDistance <= this.range) {
+					targetsInRangeGUIDs.push(targetsArray[i].GUID);
+					
+					// Check if the target is closer to this tower than previously checked targets.
+					if (targetDistance < shortestTargetDistance) {
+						target = targetsArray[i];
+						shortestTargetDistance = targetDistance;
+					}
+				}
+			}
+			
+			// Check if the tower needs to react to a target.
+			if (target != null) {
+
+				// Calculate the angle of the target relative to this tower.
+				var targetAngle = Math.atan2(target.pos.y - this.pos.y, target.pos.x - this.pos.x);
+				
+				// Reset the tower's rotation if it was previously rotated to face a target.
+				if (this.lastTargetGUID != null) {
+					this.renderable.rotate(-1 * this.lastTargetAngle - 90 * Math.PI / 180);
+				}
+				
+				// Point this tower at the target.
+				this.renderable.rotate(targetAngle + 90 * Math.PI / 180);
+				// Record the latest target angle used to rotate the tower.
+				this.lastTargetAngle = targetAngle;
+				
+				// Set a static marker for the target's current position.
+				var targetPosition = me.game.world.addChild(
+					me.pool.pull("positionMarker", target.pos.x, target.pos.y)
+				);
+				
+				// Launch a projectile at the target's current position marker.
+				me.game.world.addChild(
+					me.pool.pull("bomb", this.pos.x, this.pos.y, targetPosition.GUID, targetsInRangeGUIDs)
+				);
+				
+				// Track the latest target of this tower.
+				this.lastTargetGUID = target.GUID;
+				
+				// Initiate target attack cooldown period.
+				this.cooldownActive = true;
+				this.cooldownTimeCount = 0;
+			}
+		}
+		
+		return true;
+    },
+
+	// Tower should not react to a collision.
+	onCollision : function (response) {
+        return false;
+    }
+});
+*/
+
+
+/*
+Reference:
+Code for calculating target angle, rotating using that angle, and moving a projectile to the target using
+that angle is based on code posted by users Ian_ and agmcleod at the forum linked below, with
+necessary modifications added for correct functionality in this game.
+https://www.html5gamedevs.com/topic/34225-shooting-projectiles-in-a-specific-direction/
+*/
+/*
+game.StunBomb = me.Entity.extend({
+    init : function (x, y, targetGUID, targetsInRangeGUIDs)
+	{
+        // Set the image file.
+        settings = {};
+        settings.image = "towerDefense";
+
+        // Set the size to match the sprite sheet.
+        settings.framewidth = settings.width = 64;
+        settings.frameheight = settings.height = 64;
+
+        // Call the parent constructor.
+        this._super(me.Entity, 'init', [x, y, settings]);
+
+        // Set the image to the appropriate projectile.
+        this.renderable.addAnimation("exist", [297]);
+
+        // Set initial animation
+        this.renderable.setCurrentAnimation("exist");
+
+		// Define physics characteristics of the projectile.
+		// Setting these values appropriately is necessary for the projectile to reach its target.
+		this.body.force.set(1000,1000);
+		this.body.setMaxVelocity(50,50);
+		this.body.friction.set(0,0);
+		this.body.gravity.set(0,0);
+
+		this.damage = 8;
+
+		// Set the projectile target and initial rotation (towards target) status.
+		this.targetGUID = targetGUID;
+		this.rotated = false;
+		
+		// Set the list of targets to be affected by this bomb.
+		this.targetsInRangeGUIDs = targetsInRangeGUIDs;
+    },
+
+    update : function (dt) {
+        // Update the animation appropriately
+        this._super(me.Entity, "update", [dt]);
+		
+		// Calculate the angle of the target relative to this projectile.
+		var target = me.game.world.getChildByGUID(this.targetGUID);
+		var targetAngle = 0;
+		
+		// Confirm the target still exists.
+		if (target != null) {
+			targetAngle = Math.atan2(target.pos.y - this.pos.y, target.pos.x - this.pos.x);
+		//The target no longer exists, so remove the projectile from the map.
+		} else {
+			me.game.world.removeChild(this);
+		}
+		
+		// Check if the projectile needs to be pointed at the target.
+		if (this.rotated == false) {
+			// Point this projectile at the target.
+			this.renderable.rotate(targetAngle + 90 * Math.PI / 180);
+			this.rotated = true;
+		}
+		
+		// Set the direction and speed of the projectile.
+		// Increasing the number in a product below will increase the speed of the projectile's movement
+		// with	respect to that axis.
+		this.body.setVelocity(Math.cos(targetAngle) * 10, Math.sin(targetAngle) * 10);
+		
+        // Check for collisions
+        me.collision.check(this);
+		
+		this.body.update(dt);
+
+        return true;
+    },
+	
+	onCollision : function (response) {
+        // Check if the projectile hit its target.
+        if (response.b.GUID == this.targetGUID) {
+			// Remove the projectile and position marker from the map.
+			me.game.world.removeChild(response.a);
+			me.game.world.removeChild(response.b);
+			
+			// Distribute damage to each target within the bomb's explosion radius.
+			var i;
+			// Find all targets in the world that have a name of "killMe".
+			var targetsArray = me.game.world.getChildByName("killMe");
+			
+			// Select the closest target within range of the tower.
+			var i, shortestTargetDistance = this.range + 7;
+			for (i = 0; i < targetsArray.length; i++) {
+				targetDistance = Math.sqrt(
+					Math.pow(targetsArray[i].pos.x - this.pos.x, 2) +
+					Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
+				);
+				
+				// Check if the target is within range and closer to this tower than previously
+				//checked targets.
+				if ((targetDistance <= this.range) && (targetDistance < shortestTargetDistance)) {
+					shortestTargetDistance = targetDistance;
+					target = targetsArray[i];
+				}
+			}
+			
+			for (i = 0; i < this.targetsInRangeGUIDs.length; i++) {
+				var singleTarget = me.game.world.getChildByGUID(this.targetsInRangeGUIDs[i]);
+				
+				// Check that the target still exists in the game world.
+				if (singleTarget != null) {
+					// Lower the health of the target.
+					singleTarget.health -= this.damage;
+					// Remove the target from the map if appropriate. Otherwise, have the target flicker if
+					// it took	damage but is still alive following this collision.
+					// This is a temporary means of removing the target given this POC works with older
+					// enemy code. Once this POC is merged with master, removal of targets with 0 health
+					// will most likely be done by enemy object code.
+					if (singleTarget.health <= 0) {
+						me.game.world.removeChild(singleTarget);
+					} else {
+						singleTarget.renderable.flicker(500);
+					}
+				}
+			}
+			
+			return false;
+        }
+
+        return false;
+    }
+});
+*/

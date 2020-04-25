@@ -19,6 +19,7 @@ game.PlayScreen = me.ScreenObject.extend({
 		
 		function addTowers() {
 			me.game.world.addChild(me.pool.pull("basicRangedAttackTower", 512, 512));
+			me.game.world.addChild(me.pool.pull("explosiveDamageTower", 768, 704));
 		}
 		
 		// Load first level * CHANGE LOADLEVEL TO TEST YOUR LEVEL *
