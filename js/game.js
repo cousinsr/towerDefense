@@ -52,6 +52,12 @@ var game = {
         me.pool.register("RangeTower", game.RangeTower);
         me.pool.register("StunTower", game.StunTower);
         me.pool.register("ExplodeTower", game.ExplodeTower);
+		
+		// Add the projectile objects (launched by towers) to the entity pool.
+		me.pool.register("missile", game.Missile);
+		me.pool.register("bomb", game.Bomb);
+		// Add a static position marker used by the ExplodeTower to shoot a bomb at a fixed position.
+		me.pool.register("positionMarker", game.PositionMarker);
 
         // Add the spawn point and finishing zone to the game
         me.pool.register("Start", game.Start);
