@@ -1,5 +1,5 @@
 game.PlayScreen = me.ScreenObject.extend({
-	
+
     onResetEvent: function() {
         // Load first level with a black background covering the default melonJS background
         me.levelDirector.loadLevel("level01");
@@ -19,7 +19,7 @@ game.PlayScreen = me.ScreenObject.extend({
         var enemies = [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10];
 
         // Set number of enemies in each wave, time between each wave (in seconds), and available spawn points
-        var counts = [2, 2, 3, 3, 4, 4, 5, 5, 6, 8]; 
+        var counts = [2, 2, 3, 3, 4, 4, 5, 5, 6, 8];
         var timeGaps = [3, 10, 12, 12, 15, 15, 18, 18, 21, 25];
         var spawnPoints = me.game.world.getChildByProp("name", "Start");
         me.game.world.addChild(me.pool.pull("waveManager", enemies, counts, timeGaps, spawnPoints));
@@ -41,4 +41,3 @@ game.PlayScreen = me.ScreenObject.extend({
         me.game.world.removeChild(this.HUD);
     }
 });
-
