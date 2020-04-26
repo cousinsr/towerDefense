@@ -11,7 +11,7 @@ var game = {
     // Run on page load.
     "onload" : function () {
         // Initialize the video.
-        if (!me.video.init(1280, 1280, {wrapper : "screen", scale : "auto", scaleMethod : "flex-width"})) {
+        if (!me.video.init(1280, 1280, {wrapper : "screen", scale : "auto", scaleMethod : "fit"})) {
             alert("Your browser does not support HTML5 canvas.");
             return;
         }
@@ -36,32 +36,46 @@ var game = {
         me.pool.register("clothedSkeleton", game.ClothedSkeleton);
         me.pool.register("robedSkeleton", game.RobedSkeleton);
         me.pool.register("armoredSkeleton", game.ArmoredSkeleton);
-		
-		// Add the tower objects to the entity pool.
-		me.pool.register("basicRangedAttackTower", game.BasicRangedAttackTower);
-		me.pool.register("explosiveDamageTower", game.ExplosiveDamageTower);
-		
-		// Add the projectile objects to the entity pool.
-		me.pool.register("missile", game.Missile);
-		me.pool.register("bomb", game.Bomb);
-		
-		// Add targetting helper objects to the entity pool.
-		me.pool.register("positionMarker", game.PositionMarker);
-		
+        me.pool.register("dyingSkeleton", game.DyingSkeleton);
+
+        // Add the entity that manages waves within a level
+        me.pool.register("waveManager", game.WaveManager);
+
         // Add the turn collision objects to the entity pool
         me.pool.register("DownTurn", game.DownTurn);
         me.pool.register("UpTurn", game.UpTurn);
         me.pool.register("RightTurn", game.RightTurn);
         me.pool.register("LeftTurn", game.LeftTurn);
 
-        // Add the finishing zone to the game
+        // Add the tower objects to the entity pool
+        me.pool.register("TowerNode", game.TowerNode);
+        me.pool.register("RangeTower", game.RangeTower);
+        me.pool.register("StunTower", game.StunTower);
+        me.pool.register("ExplodeTower", game.ExplodeTower);
+
+        // Add the spawn point and finishing zone to the game
+        me.pool.register("Start", game.Start);
         me.pool.register("Finish", game.Finish);
 
 		// Enable the keyboard for the tower attack target POC.
 		me.input.bindKey(me.input.KEY.SPACE,  "shoot", true);
 		me.input.unbindKey(me.input.KEY.SPACE);
-		
+
         // Start the game.
         me.state.change(me.state.PLAY);
     }
 };
+
+game.functions =
+{
+    //remove all menu objects
+    removeMenu: function(childName)
+    {
+        var menuObjects = me.game.world.getChildByName(childName);
+        var menuObjectsLength = menuObjects.length;
+
+        // Remove objects from world
+        for (var i = 0; i < menuObjectsLength; i++)
+            me.game.world.removeChild(menuObjects[i]);
+    }
+}

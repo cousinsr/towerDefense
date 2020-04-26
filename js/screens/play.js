@@ -1,50 +1,40 @@
 game.PlayScreen = me.ScreenObject.extend({
-    /**
-     *  action to perform on state change
-     */
+
     onResetEvent: function() {
-		
-		function addRandomEnemy() {
-			var choice = Math.floor(Math.random() * 3) + 1;
-            if (choice == 1) {
-				me.game.world.addChild(me.pool.pull("clothedSkeleton", 0, 832));
-			}
-            else if (choice == 2) {
-				me.game.world.addChild(me.pool.pull("robedSkeleton", 0, 832));
-			}
-            else {
-				me.game.world.addChild(me.pool.pull("armoredSkeleton", 0, 832));
-			}
-		}
-		
-		function addTowers() {
-			me.game.world.addChild(me.pool.pull("basicRangedAttackTower", 512, 512));
-			me.game.world.addChild(me.pool.pull("explosiveDamageTower", 768, 704));
-		}
-		
-		// Load first level * CHANGE LOADLEVEL TO TEST YOUR LEVEL *
-		me.levelDirector.loadLevel("level03");
-        me.game.world.addChild(new me.ColorLayer("background", "#000000"), 0);
-		
-		// Add towers for tower attack POC.
-		// Note: The tower placement is correct only for level03 in this POC.
-		addTowers();
-		
-		// Generate enemies * COMMENT OUT UNTIL YOUR LEVEL IS READY FOR ENEMIES (COLLISION OBJECTS SET UP) *
-		addRandomEnemy();
-        me.timer.setInterval(addRandomEnemy, 1000, true);
-		
-        // reset the score
+        // Load first level with a black background covering the default melonJS background
+        me.levelDirector.loadLevel("level01");
+        me.game.world.addChild(new me.ColorLayer("background", "#373737"), 0);
+
+        // Set composition of each wave for Level 01
+        var w1 = ["clothedSkeleton"];
+        var w2 = ["clothedSkeleton", "clothedSkeleton", "robedSkeleton"];
+        var w3 = ["clothedSkeleton", "robedSkeleton", "robedSkeleton"];
+        var w4 = ["clothedSkeleton", "robedSkeleton", "armoredSkeleton"];
+        var w5 = ["clothedSkeleton", "clothedSkeleton", "armoredSkeleton"];
+        var w6 = ["robedSkeleton", "armoredSkeleton"];
+        var w7 = ["robedSkeleton", "armoredSkeleton"];
+        var w8 = ["clothedSkeleton", "robedSkeleton", "armoredSkeleton"];
+        var w9 = ["clothedSkeleton", "robedSkeleton", "armoredSkeleton"];
+        var w10 = ["clothedSkeleton", "robedSkeleton", "armoredSkeleton"];
+        var enemies = [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10];
+
+        // Set number of enemies in each wave, time between each wave (in seconds), and available spawn points
+        var counts = [2, 2, 3, 3, 4, 4, 5, 5, 6, 8];
+        var timeGaps = [3, 10, 12, 12, 15, 15, 18, 18, 21, 25];
+        var spawnPoints = me.game.world.getChildByProp("name", "Start");
+        me.game.world.addChild(me.pool.pull("waveManager", enemies, counts, timeGaps, spawnPoints));
+
+        // FROM BOILERPLATE: Reset the score
         game.data.score = 0;
 
-        // Add our HUD to the game world, add it last so that this is on top of the rest.
+        // FROM BOILERPLATE: Add our HUD to the game world, add it last so that this is on top of the rest.
         // Can also be forced by specifying a "Infinity" z value to the addChild function.
         this.HUD = new game.HUD.Container();
         me.game.world.addChild(this.HUD);
     },
 
     /**
-     *  action to perform when leaving this screen (state change)
+     *  ALL FROM BOILERPLATE: action to perform when leaving this screen (state change)
      */
     onDestroyEvent: function() {
         // remove the HUD from the game world
