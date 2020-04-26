@@ -30,11 +30,11 @@ game.RangeTower = me.Entity.extend(
 		
 		// Set attack cooldown variables.
 		this.cooldownActive = false;
-		this.cooldownDuration = 1000; // Milliseconds
+		this.cooldownDuration = 2000; // Milliseconds
 		this.cooldownTimeCount = 0; // Milliseconds
 		
 		// Set attack range variable.
-		this.range = 4 * 64; // Range = rangeMultipler * tileSize
+		this.range = 3.5 * 64; // Range = rangeMultipler * tileSize
 		
         // Set target tracking variables.
 		this.lastTargetAngle = 0;
