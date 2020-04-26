@@ -30,11 +30,11 @@ game.ExplodeTower = me.Entity.extend(
 		
 		// Set attack cooldown variables.
 		this.cooldownActive = false;
-		this.cooldownDuration = 4000; // Milliseconds
+		this.cooldownDuration = 6000; // Milliseconds
 		this.cooldownTimeCount = 0; // Milliseconds
 		
 		// Set tower attack range and bomb explosion radius variables.
-		this.range = 8 * 64; // Range = rangeMultipler * tileSize
+		this.range = 6 * 64; // Range = rangeMultipler * tileSize
 		this.explosionRadius = 4 * 64;
 		
         // Set target tracking variables.
@@ -141,7 +141,7 @@ game.PositionMarker = me.Entity.extend(
         this._super(me.Entity, 'init', [x, y, settings]);
 
 		// Set animations.
-        this.renderable.addAnimation("positionMarked", [22]);
+        this.renderable.addAnimation("positionMarked", [272]);
 
         // Set initial animation.
         this.renderable.setCurrentAnimation("positionMarked");

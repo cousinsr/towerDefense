@@ -58,6 +58,8 @@ var game = {
 		me.pool.register("bomb", game.Bomb);
 		// Add a static position marker used by the ExplodeTower to shoot a bomb at a fixed position.
 		me.pool.register("positionMarker", game.PositionMarker);
+		// Add a stun effect visual used by the StunTower when it launches attacks.
+		me.pool.register("stunEffect", game.StunEffect);
 
         // Add the spawn point and finishing zone to the game
         me.pool.register("Start", game.Start);
