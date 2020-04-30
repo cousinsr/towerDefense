@@ -64,7 +64,7 @@ game.RangeTower = me.Entity.extend(
 				
 				// Check if the last target attacked by this tower still exists in the game world.
 				if (lastTarget != null) {
-					lastTargetDistance = Math.sqrt(
+					var lastTargetDistance = Math.sqrt(
 						Math.pow(lastTarget.pos.x - this.pos.x, 2) +
 						Math.pow(lastTarget.pos.y - this.pos.y, 2)
 					);
@@ -84,7 +84,7 @@ game.RangeTower = me.Entity.extend(
 				// Select the closest target within range of the tower.
 				var i, shortestTargetDistance = this.range + 7;
 				for (i = 0; i < targetsArray.length; i++) {
-					targetDistance = Math.sqrt(
+					var targetDistance = Math.sqrt(
 						Math.pow(targetsArray[i].pos.x - this.pos.x, 2) +
 						Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
 					);
@@ -288,7 +288,7 @@ game.GroundDecal = me.Entity.extend(
         this.renderable.setCurrentAnimation("groundDecal");
 
         // Set up a countdown as a timer (in milliseconds) before this entity is removed.
-        this.countdown = 2000;
+        this.countdown = 1000;
     },
 
     update : function (dt) {
