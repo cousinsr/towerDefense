@@ -65,7 +65,28 @@ game.StunTower = me.Entity.extend(
 				// Generate a stun effect on the tower.
 				me.game.world.addChild(
 					me.pool.pull("stunEffect", this.pos.x, this.pos.y,
-					{width: TILE_WIDTH, height: TILE_HEIGHT}, this.GUID)
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
+				);
+				// Generate stun effects around the tower.
+				// Left of tower.
+				me.game.world.addChild(
+					me.pool.pull("stunEffect", this.pos.x - TILE_WIDTH, this.pos.y,
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
+				);
+				// Right of tower.
+				me.game.world.addChild(
+					me.pool.pull("stunEffect", this.pos.x + TILE_WIDTH, this.pos.y,
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
+				);
+				// Above the tower.
+				me.game.world.addChild(
+					me.pool.pull("stunEffect", this.pos.x, this.pos.y - TILE_HEIGHT,
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
+				);
+				// Below the tower.
+				me.game.world.addChild(
+					me.pool.pull("stunEffect", this.pos.x, this.pos.y + TILE_HEIGHT,
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
 				);
 				
 				// Reduce the speed of each target within range, and flicker each impacted target.
@@ -138,14 +159,17 @@ game.StunEffect = me.Entity.extend(
 		// Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 		
-		// Confirm that the stun target still exists.
-		var stunTarget = me.game.world.getChildByGUID(this.targetGUID);
-		if (stunTarget != null) {
-			// Match this stun effect's position to the target's position.
-			this.pos.x = stunTarget.pos.x;
-			this.pos.y = stunTarget.pos.y;
-		} else {
-			me.game.world.removeChild(this);
+		// Check if the stun effect needs to move to stay on target.
+		if (this.targetGUID != null) {
+			// Confirm that the stun target still exists.
+			var stunTarget = me.game.world.getChildByGUID(this.targetGUID);
+			if (stunTarget != null) {
+				// Match this stun effect's position to the target's position.
+				this.pos.x = stunTarget.pos.x;
+				this.pos.y = stunTarget.pos.y;
+			} else {
+				me.game.world.removeChild(this);
+			}
 		}
 		
 		// Rotate the stun cloud by 10 degrees.
