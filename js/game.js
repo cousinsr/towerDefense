@@ -60,6 +60,10 @@ var game = {
 		me.pool.register("positionMarker", game.PositionMarker);
 		// Add a stun effect visual used by the StunTower when it launches attacks.
 		me.pool.register("stunEffect", game.StunEffect);
+		// Add an explosion effect visual used by the ExplodeTower bombs after they impact a target.
+		me.pool.register("explosionEffect", game.ExplosionEffect);
+		// Add a static decal effect marking where a projectile (missile) hit the ground.
+		me.pool.register("groundDecal", game.GroundDecal);
 
         // Add the spawn point and finishing zone to the game
         me.pool.register("Start", game.Start);

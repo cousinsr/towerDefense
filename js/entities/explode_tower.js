@@ -35,7 +35,7 @@ game.ExplodeTower = me.Entity.extend(
 		
 		// Set tower attack range and bomb explosion radius variables.
 		this.range = 6 * 64; // Range = rangeMultipler * tileSize
-		this.explosionRadius = 4 * 64;
+		this.explosionRadius = 3 * 64;
 		
         // Set target tracking variables.
 		this.lastTargetAngle = 0;
@@ -65,7 +65,7 @@ game.ExplodeTower = me.Entity.extend(
 			// Select the closest target within range of the tower.
 			var i, shortestTargetDistance = this.range + 7;
 			for (i = 0; i < targetsArray.length; i++) {
-				targetDistance = Math.sqrt(
+				var targetDistance = Math.sqrt(
 					Math.pow(targetsArray[i].pos.x - this.pos.x, 2) +
 					Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
 				);
@@ -145,6 +145,9 @@ game.PositionMarker = me.Entity.extend(
 
         // Set initial animation.
         this.renderable.setCurrentAnimation("positionMarked");
+		
+		// Set this entity to be invisible.
+		this.renderable.setOpacity(0);
     },
 
     update : function (dt) {
@@ -236,9 +239,72 @@ game.Bomb = me.Entity.extend({
 	onCollision : function (response) {
         // Check if the projectile hit its target.
         if (response.b.GUID == this.targetGUID) {
-			// Remove the projectile and position marker from the map.
+			// Remove the projectile from the map.
 			me.game.world.removeChild(response.a);
+			
+			// Spawn a static temporary decal effect.
+			var blastSite = me.game.world.addChild(
+				me.pool.pull("groundDecal", response.b.pos.x, response.b.pos.y,
+				{width: TILE_WIDTH, height: TILE_HEIGHT})
+			);
+			
+			// Remove the position marker from the map.
 			me.game.world.removeChild(response.b);
+			
+			// Generate effects around the point of impact and within the bomb's explosion radius.
+			var blastX = 0, blastY = 0;
+			// Fill each row with effects.
+			while (blastY < this.explosionRadius) {
+				// Fill each column with effects.
+				while (blastX < this.explosionRadius) {
+					// Check the distance between the point to place an effect at, and the point of impact.
+					var pointDistance = Math.sqrt(
+						Math.pow(blastX, 2) + Math.pow(blastY, 2)
+					);
+					
+					// Set the duration of the effect at pointDistance from the point of impact.
+					// The further out the effect is from the point of impact, the lower its duration.
+					var effectLifetime = 500 *
+						(this.explosionRadius - pointDistance) / this.explosionRadius;
+					
+					// Spawn effects in each quadrant, and at random.
+					// Ensure that effects are only generated inside the bomb's explosion radius.
+					if (pointDistance <= this.explosionRadius) {
+						if (Math.floor(Math.random() * 6) == 0) {
+							me.game.world.addChild(
+								me.pool.pull("explosionEffect",
+								blastSite.pos.x + blastX, blastSite.pos.y + blastY,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, null, effectLifetime)
+							);
+						}
+						if (Math.floor(Math.random() * 6) == 0) {
+							me.game.world.addChild(
+								me.pool.pull("explosionEffect",
+								blastSite.pos.x - blastX, blastSite.pos.y + blastY,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, null, effectLifetime)
+							);
+						}
+						if (Math.floor(Math.random() * 6) == 0) {
+							me.game.world.addChild(
+								me.pool.pull("explosionEffect",
+								blastSite.pos.x + blastX, blastSite.pos.y - blastY,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, null, effectLifetime)
+							);
+						}
+						if (Math.floor(Math.random() * 6) == 0) {
+							me.game.world.addChild(
+								me.pool.pull("explosionEffect",
+								blastSite.pos.x - blastX, blastSite.pos.y - blastY,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, null, effectLifetime)
+							);
+						}
+					}
+					
+					blastX += TILE_WIDTH / 4;
+				}
+				blastX = 0;
+				blastY += TILE_HEIGHT / 4;
+			}
 			
 			// Find all targets in the world that have a name of "killMe".
 			var targetsArray = me.game.world.getChildByName("killMe");
@@ -246,7 +312,7 @@ game.Bomb = me.Entity.extend({
 			// Distribute damage to each target within the bomb's explosion radius.
 			var i;
 			for (i = 0; i < targetsArray.length; i++) {
-				targetDistance = Math.sqrt(
+				var targetDistance = Math.sqrt(
 					Math.pow(targetsArray[i].pos.x - this.pos.x, 2) +
 					Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
 				);
@@ -258,7 +324,7 @@ game.Bomb = me.Entity.extend({
 					// Have the target flicker if it took damage but is still alive following this
 					// collision.
 					if (targetsArray[i].health > 0) {
-						targetsArray[i].renderable.flicker(500);
+						targetsArray[i].renderable.flicker(1000);
 					}
 				}
 			}
@@ -266,6 +332,76 @@ game.Bomb = me.Entity.extend({
 			return true;
         }
 
+        return false;
+    }
+});
+
+
+game.ExplosionEffect = me.Entity.extend(
+{
+    init: function (x, y, settings, targetGUID, lifetime)
+    { 
+        // Update settings:
+        //  - tower image
+        //  - client (tile) height/width
+        // NOTE - the current image in /data/img/towers is a placeholder
+        // and will need to be replaced.
+        settings = {};
+        settings.image = "towerDefense";
+        settings.framewidth = settings.width = TILE_WIDTH;
+        settings.frameheight = settings.height = TILE_HEIGHT;
+
+        // Call the parent constructor.
+        this._super(me.Entity, 'init', [x, y, settings]);
+
+		// Set animations.
+        this.renderable.addAnimation("explodeEffect", [298]);
+
+        // Set initial animation.
+        this.renderable.setCurrentAnimation("explodeEffect");
+		
+		// Set the target over which this effect will appear.
+		this.targetGUID = targetGUID;
+		
+		// Set this entity to be transparent.
+		this.renderable.setOpacity(0.75);
+		
+		// Set this entity to flicker for the lifetime ms.
+        this.renderable.flicker(lifetime);
+
+        // Set up a countdown as a timer (in milliseconds) before this entity is removed.
+        this.countdown = lifetime;
+    },
+
+    update : function (dt) {
+		// Update the animation appropriately
+        this._super(me.Entity, "update", [dt]);
+		
+		// Check if the effect needs to move to stay on target.
+		if (this.targetGUID != null) {
+			// Confirm that the target still exists.
+			var target = me.game.world.getChildByGUID(this.targetGUID);
+			if (target != null) {
+				// Match this effect's position to the target's position.
+				this.pos.x = target.pos.x;
+				this.pos.y = target.pos.y;
+			} else {
+				me.game.world.removeChild(this);
+			}
+		}
+
+		// Update the countdown.
+        this.countdown -= dt;
+
+        // Remove the entity after the countdown reaches 0.
+        if (this.countdown <= 0) {
+            me.game.world.removeChild(this);
+        }
+		
+		return true;
+    },
+
+	onCollision : function (response) {
         return false;
     }
 });

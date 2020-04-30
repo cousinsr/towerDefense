@@ -49,7 +49,7 @@ game.StunTower = me.Entity.extend(
 			// Select the targets within range of the tower.
 			var i;
 			for (i = 0; i < targetsArray.length; i++) {
-				targetDistance = Math.sqrt(
+				var targetDistance = Math.sqrt(
 					Math.pow(targetsArray[i].pos.x - this.pos.x, 2) +
 					Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
 				);
@@ -65,7 +65,28 @@ game.StunTower = me.Entity.extend(
 				// Generate a stun effect on the tower.
 				me.game.world.addChild(
 					me.pool.pull("stunEffect", this.pos.x, this.pos.y,
-					{width: TILE_WIDTH, height: TILE_HEIGHT}, this.GUID)
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
+				);
+				// Generate stun effects around the tower.
+				// Left of tower.
+				me.game.world.addChild(
+					me.pool.pull("stunEffect", this.pos.x - TILE_WIDTH, this.pos.y,
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
+				);
+				// Right of tower.
+				me.game.world.addChild(
+					me.pool.pull("stunEffect", this.pos.x + TILE_WIDTH, this.pos.y,
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
+				);
+				// Above the tower.
+				me.game.world.addChild(
+					me.pool.pull("stunEffect", this.pos.x, this.pos.y - TILE_HEIGHT,
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
+				);
+				// Below the tower.
+				me.game.world.addChild(
+					me.pool.pull("stunEffect", this.pos.x, this.pos.y + TILE_HEIGHT,
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
 				);
 				
 				// Reduce the speed of each target within range, and flicker each impacted target.
@@ -121,7 +142,7 @@ game.StunEffect = me.Entity.extend(
         // Set initial animation.
         this.renderable.setCurrentAnimation("stunCloud");
 		
-		// Set the target over which this stun effect will appear.
+		// Set the target over which this effect will appear.
 		this.targetGUID = targetGUID;
 		
 		// Set this entity to be transparent.
@@ -138,17 +159,20 @@ game.StunEffect = me.Entity.extend(
 		// Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 		
-		// Confirm that the stun target still exists.
-		var stunTarget = me.game.world.getChildByGUID(this.targetGUID);
-		if (stunTarget != null) {
-			// Match this stun effect's position to the target's position.
-			this.pos.x = stunTarget.pos.x;
-			this.pos.y = stunTarget.pos.y;
-		} else {
-			me.game.world.removeChild(this);
+		// Check if the effect needs to move to stay on target.
+		if (this.targetGUID != null) {
+			// Confirm that the target still exists.
+			var target = me.game.world.getChildByGUID(this.targetGUID);
+			if (target != null) {
+				// Match this effect's position to the target's position.
+				this.pos.x = target.pos.x;
+				this.pos.y = target.pos.y;
+			} else {
+				me.game.world.removeChild(this);
+			}
 		}
 		
-		// Rotate the stun cloud by 10 degrees.
+		// Rotate the effect by 10 degrees.
 		this.renderable.rotate(10 * Math.PI / 180);
 		
 		// Update the countdown.
