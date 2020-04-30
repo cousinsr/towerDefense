@@ -171,23 +171,39 @@ game.Missile = me.Entity.extend({
 		// Set the projectile target and initial rotation (towards target) status.
 		this.targetGUID = targetGUID;
 		this.rotated = false;
+		
+		// Track the last known coordinates of the target.
+		var target = me.game.world.getChildByGUID(this.targetGUID);
+		this.targetLastXPos = target.pos.x;
+		this.targetLastYPos = target.pos.y;
+		
+		// freeAgent is fale if the projectile has an exclusive target.
+		// freeAgent is true if the projectile is allowed to collide with any enemy target.
+		this.freeAgent = false;
     },
 
     update : function (dt) {
         // Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 		
-		// Calculate the angle of the target relative to this projectile.
 		var target = me.game.world.getChildByGUID(this.targetGUID);
-		var targetAngle = 0;
 		
 		// Confirm the target still exists.
 		if (target != null) {
-			targetAngle = Math.atan2(target.pos.y - this.pos.y, target.pos.x - this.pos.x);
-		//The target no longer exists, so remove the projectile from the map.
+			this.targetLastXPos = target.pos.x;
+			this.targetLastYPos = target.pos.y;
+		//The target no longer exists, so replace it with a static position marker.
 		} else {
-			me.game.world.removeChild(this);
+			target = me.game.world.addChild(
+						me.pool.pull("positionMarker", this.targetLastXPos, this.targetLastYPos,
+						{width: TILE_WIDTH, height: TILE_HEIGHT})
+					);
+			this.targetGUID = target.GUID;
+			this.freeAgent = true;
 		}
+		
+		// Calculate the angle of the target relative to this projectile.
+		var targetAngle = Math.atan2(target.pos.y - this.pos.y, target.pos.x - this.pos.x);
 		
 		// Check if the projectile needs to be pointed at the target.
 		if (this.rotated == false) {
@@ -210,8 +226,9 @@ game.Missile = me.Entity.extend({
     },
 	
 	onCollision : function (response) {
-        // Check if the projectile hit its target.
-        if (response.b.GUID == this.targetGUID) {
+        // Check if the projectile hit its original target, or if it is a free agent and hit an enemy.
+        if ((!this.freeAgent && response.b.GUID == this.targetGUID) ||
+		(this.freeAgent && response.b.name == "killMe")) {
 			// Remove the projectile from the map.
 			me.game.world.removeChild(response.a);
 			// Lower the health of the target.
@@ -220,10 +237,76 @@ game.Missile = me.Entity.extend({
 			if (response.b.health > 0) {
 				response.b.renderable.flicker(500);
 			}
+			// Check if a static position marker needs to be removed.
+			if (this.freeAgent) {
+				var target = me.game.world.getChildByGUID(this.targetGUID);
+				me.game.world.removeChild(target);
+			}
 			
 			return true;
-        }
+		// Check if the projectile is a free agent that hit its static position marker.
+        } else if (this.freeAgent && response.b.GUID == this.targetGUID) {
+			// Remove the projectile from the map.
+			me.game.world.removeChild(response.a);
+			// Spawn a static temporary decal effect.
+			me.game.world.addChild(
+				me.pool.pull("groundDecal", response.b.pos.x, response.b.pos.y,
+				{width: TILE_WIDTH, height: TILE_HEIGHT})
+			);
+			// Remove the static position marker from the map.
+			me.game.world.removeChild(response.b);
+			
+			return true;
+		}
 
+        return false;
+    }
+});
+
+
+game.GroundDecal = me.Entity.extend(
+{
+    init: function (x, y, settings)
+    { 
+        // Update settings:
+        //  - tower image
+        //  - client (tile) height/width
+        // NOTE - the current image in /data/img/towers is a placeholder
+        // and will need to be replaced.
+        settings = {};
+        settings.image = "towerDefense";
+        settings.framewidth = settings.width = TILE_WIDTH;
+        settings.frameheight = settings.height = TILE_HEIGHT;
+
+        // Call the parent constructor.
+        this._super(me.Entity, 'init', [x, y, settings]);
+
+		// Set animations.
+        this.renderable.addAnimation("groundDecal", [21]);
+
+        // Set initial animation.
+        this.renderable.setCurrentAnimation("groundDecal");
+
+        // Set up a countdown as a timer (in milliseconds) before this entity is removed.
+        this.countdown = 2000;
+    },
+
+    update : function (dt) {
+		// Update the animation appropriately
+        this._super(me.Entity, "update", [dt]);
+		
+		// Update the countdown.
+        this.countdown -= dt;
+
+        // Remove the entity after the countdown reaches 0.
+        if (this.countdown <= 0) {
+            me.game.world.removeChild(this);
+        }
+		
+		return true;
+    },
+
+	onCollision : function (response) {
         return false;
     }
 });

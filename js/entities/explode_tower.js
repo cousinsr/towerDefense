@@ -145,6 +145,9 @@ game.PositionMarker = me.Entity.extend(
 
         // Set initial animation.
         this.renderable.setCurrentAnimation("positionMarked");
+		
+		// Set this entity to be invisible.
+		this.renderable.setOpacity(0);
     },
 
     update : function (dt) {
