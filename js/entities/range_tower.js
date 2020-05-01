@@ -78,8 +78,8 @@ game.RangeTower = me.Entity.extend(
 			
 			// Check if a new target should be searched for.
 			if (target == null) {
-				// Find all targets in the world that have a name of "killMe".
-				var targetsArray = me.game.world.getChildByName("killMe");
+				// Find all targets in the world that have a name of "enemy".
+				var targetsArray = me.game.world.getChildByName("enemy");
 				
 				// Select the closest target within range of the tower.
 				var i, shortestTargetDistance = this.range + 7;
@@ -228,7 +228,7 @@ game.Missile = me.Entity.extend({
 	onCollision : function (response) {
         // Check if the projectile hit its original target, or if it is a free agent and hit an enemy.
         if ((!this.freeAgent && response.b.GUID == this.targetGUID) ||
-		(this.freeAgent && response.b.name == "killMe")) {
+		(this.freeAgent && response.b.name == "enemy")) {
 			// Remove the projectile from the map.
 			me.game.world.removeChild(response.a);
 			// Lower the health of the target.
