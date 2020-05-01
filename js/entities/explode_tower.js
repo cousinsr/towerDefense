@@ -59,8 +59,8 @@ game.ExplodeTower = me.Entity.extend(
 		if (this.cooldownActive == false) {
 			var target = null;
 			
-			// Find all targets in the world that have a name of "killMe".
-			var targetsArray = me.game.world.getChildByName("killMe");
+			// Find all targets in the world that have a name of "enemy".
+			var targetsArray = me.game.world.getChildByName("enemy");
 			
 			// Select the closest target within range of the tower.
 			var i, shortestTargetDistance = this.range + 7;
@@ -306,8 +306,8 @@ game.Bomb = me.Entity.extend({
 				blastY += TILE_HEIGHT / 4;
 			}
 			
-			// Find all targets in the world that have a name of "killMe".
-			var targetsArray = me.game.world.getChildByName("killMe");
+			// Find all targets in the world that have a name of "enemy".
+			var targetsArray = me.game.world.getChildByName("enemy");
 			
 			// Distribute damage to each target within the bomb's explosion radius.
 			var i;

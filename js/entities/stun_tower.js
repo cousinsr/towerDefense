@@ -7,7 +7,7 @@ game.StunTower = me.Entity.extend(
         //  - client (tile) height/width
         // NOTE - the current image in /data/img/towers is a placeholder
         // and will need to be replaced.
-        settings.image = "stunTower";
+        settings.image = "NihilAce-pack_4_stunTowerSnip";
         settings.framewidth = TILE_WIDTH;
         settings.frameheight = TILE_HEIGHT;
 
@@ -43,8 +43,8 @@ game.StunTower = me.Entity.extend(
 		if (this.cooldownActive == false) {
 			var targetsInRangeGUIDs = [];
 			
-			// Find all targets in the world that have a name of "killMe".
-			var targetsArray = me.game.world.getChildByName("killMe");
+			// Find all targets in the world that have a name of "enemy".
+			var targetsArray = me.game.world.getChildByName("enemy");
 			
 			// Select the targets within range of the tower.
 			var i;

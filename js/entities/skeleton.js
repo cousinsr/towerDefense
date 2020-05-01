@@ -22,7 +22,7 @@ game.Skeleton = me.Entity.extend(
         settings.image = skeletonImage;
 
 		// Set the name for skeleton units since they serve as targets of towers.
-		settings.name = "killMe";
+		settings.name = "enemy";
 
         // Set the size to match the sprite sheet
         settings.framewidth = settings.width = 64;
