@@ -27,6 +27,7 @@ var game = {
     // Run on game resources loaded.
     "loaded" : function () {
         me.state.set(me.state.MENU, new game.TitleScreen());
+        me.state.set(me.state.INFO, new game.InstructionScreen());
         me.state.set(me.state.PLAY, new game.PlayScreen());
 
         // Add our player entity in the entity pool
@@ -76,7 +77,7 @@ var game = {
         me.input.unbindKey(me.input.KEY.SPACE);
 
         // Start the game.
-        me.state.change(me.state.PLAY);
+        me.state.change(me.state.MENU);
     }
 };
 
