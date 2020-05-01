@@ -2,7 +2,7 @@ game.PlayScreen = me.ScreenObject.extend({
 
     onResetEvent: function() {
         // Load first level with a black background covering the default melonJS background
-        me.levelDirector.loadLevel("level01");
+        me.levelDirector.loadLevel(TILE_LEVEL);
         me.game.world.addChild(new me.ColorLayer("background", "#373737"), 0);
 
         // Set composition of each wave for Level 01
@@ -23,6 +23,11 @@ game.PlayScreen = me.ScreenObject.extend({
         var timeGaps = [3, 10, 12, 12, 15, 15, 18, 18, 21, 25];
         var spawnPoints = me.game.world.getChildByProp("name", "Start");
         me.game.world.addChild(me.pool.pull("waveManager", enemies, counts, timeGaps, spawnPoints));
+
+        // Add static tower menu buttons
+        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 2.5*TILE_HEIGHT, MENU_RANGE));
+        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 4.5*TILE_HEIGHT, MENU_EXPLODE));
+        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 6.5*TILE_HEIGHT, MENU_STUN));
 
         // FROM BOILERPLATE: Reset the score
         game.data.score = 0;
