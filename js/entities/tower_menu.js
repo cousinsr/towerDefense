@@ -15,7 +15,7 @@ game.TowerMenuItem = me.GUI_Object.extend(
         this.towerType = towerType;
     },
 
-    onClick(e)
+    onClick: function (event)
     {
         // Find the selected tower node
         var towerNodes = me.game.world.getChildByName("TowerNode");
