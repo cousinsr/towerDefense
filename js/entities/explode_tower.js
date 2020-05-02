@@ -251,6 +251,7 @@ game.Bomb = me.Entity.extend({
 			// Remove the position marker from the map.
 			me.game.world.removeChild(response.b);
 			
+			/*
 			// Generate effects around the point of impact and within the bomb's explosion radius.
 			var blastX = 0, blastY = 0;
 			// Fill each row with effects.
@@ -304,7 +305,7 @@ game.Bomb = me.Entity.extend({
 				}
 				blastX = 0;
 				blastY += TILE_HEIGHT / 4;
-			}
+			}*/
 			
 			// Find all targets in the world that have a name of "enemy".
 			var targetsArray = me.game.world.getChildByName("enemy");
@@ -312,19 +313,39 @@ game.Bomb = me.Entity.extend({
 			// Distribute damage to each target within the bomb's explosion radius.
 			var i;
 			for (i = 0; i < targetsArray.length; i++) {
+				// The targetDistance calculation uses the coordinates of the target hit (blastSite)
+				// instead of the projectile (response.a, or "this") because the explosion is intended
+				// emanate from the point of impact that is where the projectile meets the target.
+				// The projectile position is to the left of that point of impact by TILE_WIDTH.
 				var targetDistance = Math.sqrt(
-					Math.pow(targetsArray[i].pos.x - this.pos.x, 2) +
-					Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
+					Math.pow(targetsArray[i].pos.x - blastSite.pos.x, 2) +
+					Math.pow(targetsArray[i].pos.y - blastSite.pos.y, 2)
 				);
 				
 				// Check if the target is within the bomb's explosion radius.
 				if (targetDistance <= this.explosionRadius) {
 					// Lower the health of the target.
 					targetsArray[i].health -= this.damage;
-					// Have the target flicker if it took damage but is still alive following this
-					// collision.
+					// Have the target flicker if it is still alive, and apply an effect to the target.
 					if (targetsArray[i].health > 0) {
 						targetsArray[i].renderable.flicker(1000);
+						me.game.world.addChild(
+								me.pool.pull("explosionEffect",
+								targetsArray[i].pos.x, targetsArray[i].pos.y,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, targetsArray[i].GUID, 1000)
+						);
+					// The target died, so place an effect at its current position.
+					} else {
+						// Set the duration of the effect at targetDistance from the point of impact.
+						// The further out the effect is from the point of impact, the lower its duration.
+						var effectLifetime = 1000 *
+							(this.explosionRadius - targetDistance) / this.explosionRadius;
+						
+						me.game.world.addChild(
+								me.pool.pull("explosionEffect",
+								targetsArray[i].pos.x, targetsArray[i].pos.y,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, null, effectLifetime)
+						);
 					}
 				}
 			}
@@ -364,7 +385,7 @@ game.ExplosionEffect = me.Entity.extend(
 		this.targetGUID = targetGUID;
 		
 		// Set this entity to be transparent.
-		this.renderable.setOpacity(0.75);
+		this.renderable.setOpacity(0.95);
 		
 		// Set this entity to flicker for the lifetime ms.
         this.renderable.flicker(lifetime);
