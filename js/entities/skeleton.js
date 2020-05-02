@@ -127,6 +127,7 @@ game.Skeleton = me.Entity.extend(
         // Leave the map when reaching the end of the path
         if (response.b.name == "Finish") {
             me.game.world.removeChild(this);
+			game.data.life -= 1;
             return false;
         }
 
