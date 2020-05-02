@@ -124,10 +124,11 @@ game.Skeleton = me.Entity.extend(
             this.pos.y = response.b.pos.y + modifier;
             return false;
         }
-        // Leave the map when reaching the end of the path
-        if (response.b.name == "Finish") {
-            me.game.world.removeChild(this);
+        // Leave the map when reaching the end of the path and remove a life
+        if (response.b.name == "Finish" && !game.data.missedSkeletons.includes(this)) {
+			game.data.missedSkeletons.push(this);
 			game.data.life -= 1;
+            me.game.world.removeChild(this);
             return false;
         }
 
