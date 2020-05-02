@@ -27,6 +27,10 @@ game.WaveManager = me.Entity.extend({
         this.numWaves = counts.length;
         this.enemiesRemaining = counts[0];
 		this.timeBeforeNextEnemy = gaps[0] * 1000;
+        this.startOfWave = true;
+		
+		// Reset the global wave counter
+		game.data.wave = 0;
     },
     update : function (dt) {
         // Update timer
@@ -34,6 +38,11 @@ game.WaveManager = me.Entity.extend({
 
         // Add an enemy if the timer has reached 0
         if (this.timeBeforeNextEnemy <= 0) {
+			// Update the wave count
+			if (this.startOfWave) {
+				this.startOfWave = false;
+				game.data.wave += 1;
+			}
             // Update timer and enemy count
             this.timeBeforeNextEnemy = 1000;
             this.enemiesRemaining -= 1;
@@ -61,6 +70,7 @@ game.WaveManager = me.Entity.extend({
             this.timeBeforeNextEnemy = this.gaps[this.wave] * 1000;
             this.enemiesRemaining = this.counts[this.wave];
             this.wave += 1;
+			this.startOfWave = true;
         }
         // Remove the wave manager from the game if all enemies have been added
         if (this.enemiesRemaining <= 0 && this.wave >= this.numWaves) {
