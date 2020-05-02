@@ -36,6 +36,7 @@ var game = {
         me.pool.register("mainPlayer", game.PlayerEntity);
 
         // Add the enemy skeleton objects to the entity pool
+        me.pool.register("Skeleton", game.Skeleton);
         me.pool.register("clothedSkeleton", game.ClothedSkeleton);
         me.pool.register("robedSkeleton", game.RobedSkeleton);
         me.pool.register("armoredSkeleton", game.ArmoredSkeleton);

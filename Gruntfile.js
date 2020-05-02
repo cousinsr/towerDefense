@@ -7,9 +7,26 @@ module.exports = function(grunt) {
         src: [
           'lib/melonjs.js',
           'lib/plugins/**/*.js',
+          'js/constants.js',
           'js/game.js',
           'build/js/resources.js',
-          'js/**/*.js',
+          'js/entities/entities.js',
+          'js/entities/HUD.js',
+          'js/entities/explode_tower.js',
+          'js/entities/range_tower.js',
+          'js/entities/stun_tower.js',
+          'js/entities/tower_node.js',
+          'js/entities/tower_menu.js',
+          'js/entities/skeleton.js',
+          'js/entities/clothed_skeleton.js',
+          'js/entities/robed_skeleton.js',
+          'js/entities/armored_skeleton.js',
+          'js/entities/dying_skeleton.js',
+          'js/entities/path_objects.js',
+          'js/entities/wave_manager.js',
+          'js/screens/title.js',
+          'js/screens/instructions.js',
+          'js/screens/play.js',
         ],
         dest: 'build/js/app.js'
       }
@@ -132,12 +149,12 @@ module.exports = function(grunt) {
         files: [{
           src: ['data/bgm/**/*', 'data/sfx/**/*'],
           type: 'audio'
-		},{
-			src: ['data/fnt/**/*.fnt'],
-			type: 'binary'
-		},{
-			src: ['data/fnt/**/*.png'],
-			type: 'image'
+        },{
+          src: ['data/fnt/**/*.fnt'],
+          type: 'binary'
+        },{
+          src: ['data/fnt/**/*.png'],
+          type: 'image'
         },{
           src: ['data/img/**/*.png'],
           type: 'image'

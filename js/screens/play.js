@@ -1,4 +1,4 @@
-game.PlayScreen = me.ScreenObject.extend({
+game.PlayScreen = me.Stage.extend({
 
     onResetEvent: function() {
         // Load first level with a black background covering the default melonJS background

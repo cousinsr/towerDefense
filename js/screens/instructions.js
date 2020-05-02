@@ -1,4 +1,4 @@
-game.InstructionScreen = me.ScreenObject.extend({
+game.InstructionScreen = me.Stage.extend({
 
   onResetEvent : function () {
     /*
