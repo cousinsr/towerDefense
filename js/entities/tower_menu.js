@@ -2,14 +2,12 @@
 game.TowerMenuItem = me.GUI_Object.extend(
 {
     // constructor:
-    init: function(x, y, towerType)
+    init: function(x, y, towerType, imageName)
     {
-        // NOTE - the current image is for demonstrative purposes
-        // and will need to be replaced.
         settings = {};
-        settings.image = "towerNode";
+        settings.image = imageName;
         settings.frameheight = TILE_HEIGHT;
-        settings.framewidth = TILE_WIDTH;
+        settings.framewidth = TILE_WIDTH*2;
         this._super(me.GUI_Object, "init", [x, y, settings]);
 
         this.towerType = towerType;
@@ -37,19 +35,19 @@ game.TowerMenuItem = me.GUI_Object.extend(
         {
             tower.selected = false;
             tower.locked = true;
-            me.game.world.removeChild(tower.towerObject);
+            me.game.world.removeChild(tower.currentTower);
 
             if (this.towerType == MENU_RANGE)
-                tower.towerObject = me.game.world.addChild(
+                tower.currentTower = me.game.world.addChild(
                     new game.RangeTower(x, y, {width: TILE_WIDTH, height: TILE_HEIGHT}));
 
-            else if (this.towerType == MENU_EXPLODE)
-                tower.towerObject = me.game.world.addChild(
-                    new game.ExplodeTower(x, y, {width: TILE_WIDTH, height: TILE_HEIGHT}));
-
             else if (this.towerType == MENU_STUN)
-                tower.towerObject = me.game.world.addChild(
+                tower.currentTower = me.game.world.addChild(
                     new game.StunTower(x, y, {width: TILE_WIDTH, height: TILE_HEIGHT}));
+
+            else if (this.towerType == MENU_EXPLODE)
+                tower.currentTower = me.game.world.addChild(
+                    new game.ExplodeTower(x, y, {width: TILE_WIDTH, height: TILE_HEIGHT}));
         }
 
         // don't propagate the event

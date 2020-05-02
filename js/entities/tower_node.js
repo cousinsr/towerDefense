@@ -18,7 +18,8 @@ game.TowerNode = me.GUI_Object.extend(
         this.y = y;
         this.selected = false;
         this.locked = false;
-        this.towerObject = this;
+        this.parentTower = this;
+        this.currentTower = this;
     },
 
     // Change to selected tower object if a tower hasn't already been placed.
@@ -32,15 +33,14 @@ game.TowerNode = me.GUI_Object.extend(
                 if (towerNodes[i].selected)
                 {
                     towerNodes[i].selected = false;
-                    me.game.world.removeChild(towerNodes[i].towerObject);
-                    towerNodes[i].towerObject = me.game.world.addChild(
-                        new game.TowerNode(towerNodes[i].x, towerNodes[i].y));
+                    me.game.world.removeChild(towerNodes[i].currentTower);
+                    towerNodes[i].currentTower = towerNodes[i];
                 }
 
             // Select the existing tower.
             this.selected = true;
-            this.towerObject = me.game.world.addChild(
-                new game.TowerSelectedNode(this.x, this.y));
+            this.currentTower = me.game.world.addChild(
+                new game.TowerSelectedNode(this.x, this.y, this.parentTower));
         }
 
         // don't propagate the event
@@ -51,7 +51,7 @@ game.TowerNode = me.GUI_Object.extend(
 game.TowerSelectedNode = me.GUI_Object.extend(
 {
     // constructor:
-    init: function (x, y)
+    init: function (x, y, parentTower)
     {
         var settings = {};
         settings.image = "selectedNode";
@@ -67,7 +67,8 @@ game.TowerSelectedNode = me.GUI_Object.extend(
         this.y = y;
         this.selected = true;
         this.locked = false;
-        this.towerObject = this;
+        this.parentTower = parentTower;
+        this.currentTower = this;
     },
 
     // Change back to tower node object if a tower hasn't already been placed.
@@ -75,9 +76,8 @@ game.TowerSelectedNode = me.GUI_Object.extend(
     {
         if (this.locked == false) 
         {
-            me.game.world.removeChild(this.towerObject);
-            this.towerObject = me.game.world.addChild(
-                new game.TowerNode(this.x, this.y));
+            me.game.world.removeChild(this.currentTower);
+            this.currentTower = this.parentTower;
             this.selected = false;
         }
 

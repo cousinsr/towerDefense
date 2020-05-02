@@ -25,16 +25,16 @@ game.PlayScreen = me.Stage.extend({
         me.game.world.addChild(me.pool.pull("waveManager", enemies, counts, timeGaps, spawnPoints));
 
         // Add static tower menu buttons
-        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 2.5*TILE_HEIGHT, MENU_RANGE));
-        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 4.5*TILE_HEIGHT, MENU_EXPLODE));
-        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 6.5*TILE_HEIGHT, MENU_STUN));
+        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 2.5*TILE_HEIGHT, MENU_RANGE, "button50"));
+        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 4.5*TILE_HEIGHT, MENU_STUN, "button50"));
+        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 6.5*TILE_HEIGHT, MENU_EXPLODE, "button75"));
 
         // FROM BOILERPLATE: Reset the score
         game.data.score = 0;
-		// Reset player life balance.
-		game.data.life = 10;
-		// Begin empty array of missed skeletons
-		game.data.missedSkeletons = [];
+        // Reset player life balance.
+        game.data.life = 10;
+        // Begin empty array of missed skeletons
+        game.data.missedSkeletons = [];
 
         // FROM BOILERPLATE: Add our HUD to the game world, add it last so that this is on top of the rest.
         // Can also be forced by specifying a "Infinity" z value to the addChild function.
