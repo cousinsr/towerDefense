@@ -1,3 +1,4 @@
+/* From the MelonJS Boilerplate */
 module.exports = function (grunt) {
     function task() {
         var path = require("path"),

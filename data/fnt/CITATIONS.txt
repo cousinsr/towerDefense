@@ -1,0 +1,3 @@
+The font comes from the MelonJS platformer tutorial at http://melonjs.github.io/tutorial-platformer/.
+
+See the license for full details on the font.
