@@ -1,13 +1,18 @@
-/* Game namespace */
+/********************************************************************
+ * Game Namespace
+ *
+ * CITATION: This code is adapted from the MelonJS Boilerplate
+ *
+ ********************************************************************/
 var game = {
 
-    // an object where to store game information
+    // Global game information
     data : {
 		// Player life balance
 		life: 0,
+        // Wave count
         wave: 0
     },
-
 
     // Run on page load.
     "onload" : function () {
@@ -30,9 +35,6 @@ var game = {
         me.state.set(me.state.MENU, new game.TitleScreen());
         me.state.set(me.state.INFO, new game.InstructionScreen());
         me.state.set(me.state.PLAY, new game.PlayScreen());
-
-        // Add our player entity in the entity pool
-        me.pool.register("mainPlayer", game.PlayerEntity);
 
         // Add the enemy skeleton objects to the entity pool
         me.pool.register("Skeleton", game.Skeleton);
@@ -78,7 +80,7 @@ var game = {
         me.input.bindKey(me.input.KEY.SPACE,  "shoot", true);
         me.input.unbindKey(me.input.KEY.SPACE);
 
-        // Start the game.
+        // Start the title menu
         me.state.change(me.state.MENU);
     }
 };

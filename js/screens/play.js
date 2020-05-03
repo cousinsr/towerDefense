@@ -1,3 +1,9 @@
+/********************************************************************
+ * Play screen for the actual game
+
+ * CITATION: This code is adapted from the MelonJS Boilerplate
+ *
+ ********************************************************************/
 game.PlayScreen = me.Stage.extend({
 
     onResetEvent: function() {
@@ -29,24 +35,18 @@ game.PlayScreen = me.Stage.extend({
         me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 4.5*TILE_HEIGHT, MENU_STUN, "button50"));
         me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 6.5*TILE_HEIGHT, MENU_EXPLODE, "button75"));
 
-        // FROM BOILERPLATE: Reset the score
-        game.data.score = 0;
         // Reset player life balance.
         game.data.life = 10;
         // Begin empty array of missed skeletons
         game.data.missedSkeletons = [];
 
-        // FROM BOILERPLATE: Add our HUD to the game world, add it last so that this is on top of the rest.
-        // Can also be forced by specifying a "Infinity" z value to the addChild function.
+        // Add the HUD to the game
         this.HUD = new game.HUD.Container();
         me.game.world.addChild(this.HUD);
     },
 
-    /**
-     *  ALL FROM BOILERPLATE: action to perform when leaving this screen (state change)
-     */
     onDestroyEvent: function() {
-        // remove the HUD from the game world
+        // Remove the HUD from the game world
         me.game.world.removeChild(this.HUD);
     }
 });
