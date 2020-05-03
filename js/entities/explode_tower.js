@@ -190,7 +190,8 @@ game.Bomb = me.Entity.extend({
 		this.body.friction.set(0,0);
 		this.body.gravity.set(0,0);
 
-		this.damage = 8;
+		this.damage = 4;
+		this.hit = null;
 
 		// Set the projectile target and initial rotation (towards target) status.
 		this.targetGUID = targetGUID;

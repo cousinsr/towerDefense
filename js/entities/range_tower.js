@@ -166,7 +166,8 @@ game.Missile = me.Entity.extend({
 		this.body.friction.set(0,0);
 		this.body.gravity.set(0,0);
 
-		this.damage = 4;
+		this.damage = 2;
+		this.hit = null;
 
 		// Set the projectile target and initial rotation (towards target) status.
 		this.targetGUID = targetGUID;
@@ -232,7 +233,10 @@ game.Missile = me.Entity.extend({
 			// Remove the projectile from the map.
 			me.game.world.removeChild(response.a);
 			// Lower the health of the target.
-			response.b.health -= this.damage;
+			if (this.hit != response.b) {
+				this.hit = response.b;
+				response.b.health -= this.damage;
+			}
 			// Have the target flicker if it took damage but is still alive following this collision.
 			if (response.b.health > 0) {
 				response.b.renderable.flicker(500);
