@@ -42,16 +42,36 @@ game.Skeleton = me.Entity.extend(
 
         // Set up initial attributes of this enemy
         this.speed = speed;
+        this.normalSpeed = speed;
+        this.stunnedSpeed = speed / 2;
         this.health = health;
         this.orientation = "RIGHT";
         this.dyingImage = "hurt_" + skeletonImage;
         this.alive = true;
+        this.stunned = false;
+        this.stunTimer = 0;
     },
 
     update : function (dt) {
         // Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 
+		//Update stunned status and speed
+        if (this.stunned) {
+            this.stunTimer -= dt;
+            if (this.stunTimer <= 0) {
+                this.stunned = false;
+                this.speed = this.normalSpeed;
+            }
+            else {
+                this.setOpacity(0.1);
+                this.speed = this.stunnedSpeed;
+            }
+        }
+        else {
+            this.speed = this.normalSpeed;
+        }
+		
         // Move entity in the appropriate direction
         if (this.orientation == "RIGHT") {
             this.pos.x += this.speed * dt/1000;

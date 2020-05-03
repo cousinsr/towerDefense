@@ -15,7 +15,10 @@ game.StunTower = me.Entity.extend(
         this._super(me.Entity, "init", [x, y, settings]);
 		
 		// Set the fraction of target speed that will be taken away upon hit.
-		this.speedModifier = 0.75;
+		// this.speedModifier = 0.75;
+		
+		// Set the length of time in milliseconds the enemy will be stunned
+		this.stunTime = 10000;
 		
 		// Set attack cooldown variables.
 		this.cooldownActive = false;
@@ -93,8 +96,10 @@ game.StunTower = me.Entity.extend(
 				var j;
 				for (j = 0; j < targetsInRangeGUIDs.length; j++) {
 					var singleTarget = me.game.world.getChildByGUID(targetsInRangeGUIDs[j]);
-					singleTarget.speed *= this.speedModifier;
-					singleTarget.renderable.flicker(250);
+					//singleTarget.speed *= this.speedModifier;
+					singleTarget.renderable.flicker(500);
+					singleTarget.stunned = true;
+					singleTarget.stunTimer = this.stunTime;
 					
 					// Generate a stun effect on the target.
 					me.game.world.addChild(
