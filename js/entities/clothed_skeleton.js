@@ -13,8 +13,9 @@ game.ClothedSkeleton = game.Skeleton.extend(
         // Set the attributes for calling the constructor
         var speed = 200;
         var health = 4;
+        var reward = ENEMY_GOLD_CLOTHED;
 
         // Call the parent constructor
-        this._super(game.Skeleton, 'init', [x, y, "clothed_skeleton", speed, health]);
+        this._super(game.Skeleton, 'init', [x, y, "clothed_skeleton", speed, health, reward]);
     }
 });

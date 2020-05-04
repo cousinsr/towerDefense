@@ -25,7 +25,7 @@ game.TowerNode = me.GUI_Object.extend(
     // Change to selected tower object if a tower hasn't already been placed.
     onClick: function (event)
     {
-        if (this.locked == false) 
+        if ((this.locked == false) && (game.data.gold >= TOWER_COST_RANGE)) 
         {
             // Check if any other tower nodes are already selected.
             var towerNodes = me.game.world.getChildByName("TowerNode");

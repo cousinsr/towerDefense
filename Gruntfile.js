@@ -11,7 +11,6 @@ module.exports = function(grunt) {
           'js/constants.js',
           'js/game.js',
           'build/js/resources.js',
-          'js/entities/entities.js',
           'js/entities/HUD.js',
           'js/entities/explode_tower.js',
           'js/entities/range_tower.js',

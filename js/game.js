@@ -8,10 +8,12 @@ var game = {
 
     // Global game information
     data : {
-		// Player life balance
-		life: 0,
+        // Player life balance
+        life: 0,
         // Wave count
-        wave: 0
+        wave: 0,
+        // Starting gold count
+        gold: START_GOLD
     },
 
     // Run on page load.
@@ -59,18 +61,18 @@ var game = {
         me.pool.register("RangeTower", game.RangeTower);
         me.pool.register("StunTower", game.StunTower);
         me.pool.register("ExplodeTower", game.ExplodeTower);
-		
-		// Add the projectile objects (launched by towers) to the entity pool.
-		me.pool.register("missile", game.Missile);
-		me.pool.register("bomb", game.Bomb);
-		// Add a static position marker used by the ExplodeTower to shoot a bomb at a fixed position.
-		me.pool.register("positionMarker", game.PositionMarker);
-		// Add a stun effect visual used by the StunTower when it launches attacks.
-		me.pool.register("stunEffect", game.StunEffect);
-		// Add an explosion effect visual used by the ExplodeTower bombs after they impact a target.
-		me.pool.register("explosionEffect", game.ExplosionEffect);
-		// Add a static decal effect marking where a projectile (missile) hit the ground.
-		me.pool.register("groundDecal", game.GroundDecal);
+
+        // Add the projectile objects (launched by towers) to the entity pool.
+        me.pool.register("missile", game.Missile);
+        me.pool.register("bomb", game.Bomb);
+        // Add a static position marker used by the ExplodeTower to shoot a bomb at a fixed position.
+        me.pool.register("positionMarker", game.PositionMarker);
+        // Add a stun effect visual used by the StunTower when it launches attacks.
+        me.pool.register("stunEffect", game.StunEffect);
+        // Add an explosion effect visual used by the ExplodeTower bombs after they impact a target.
+        me.pool.register("explosionEffect", game.ExplosionEffect);
+        // Add a static decal effect marking where a projectile (missile) hit the ground.
+        me.pool.register("groundDecal", game.GroundDecal);
 
         // Add the spawn point and finishing zone to the game
         me.pool.register("Start", game.Start);

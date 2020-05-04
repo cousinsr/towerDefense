@@ -31,9 +31,12 @@ game.PlayScreen = me.Stage.extend({
         me.game.world.addChild(me.pool.pull("waveManager", enemies, counts, timeGaps, spawnPoints));
 
         // Add static tower menu buttons
-        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 2.5*TILE_HEIGHT, MENU_RANGE, "button50"));
-        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 4.5*TILE_HEIGHT, MENU_STUN, "button50"));
-        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 6.5*TILE_HEIGHT, MENU_EXPLODE, "button75"));
+        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 2.5*TILE_HEIGHT,
+            TOWER_MENU_RANGE, "button50", TOWER_COST_RANGE));
+        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 4.5*TILE_HEIGHT,
+            TOWER_MENU_STUN, "button50", TOWER_COST_STUN));
+        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 6.5*TILE_HEIGHT,
+            TOWER_MENU_EXPLODE, "button75", TOWER_COST_EXPLODE));
 
         // Reset player life balance.
         game.data.life = 10;

@@ -16,7 +16,7 @@
  ********************************************************************/
 game.Skeleton = me.Entity.extend(
 {
-    init: function (x, y, skeletonImage, speed, health) { 
+    init: function (x, y, skeletonImage, speed, health, reward) { 
         // Set the image to the appropriate skeleton
         settings = {};
         settings.image = skeletonImage;
@@ -45,6 +45,7 @@ game.Skeleton = me.Entity.extend(
         this.normalSpeed = speed;
         this.stunnedSpeed = speed / 2;
         this.health = health;
+        this.reward = reward;
         this.orientation = "RIGHT";
         this.dyingImage = "hurt_" + skeletonImage;
         this.alive = true;
@@ -92,6 +93,7 @@ game.Skeleton = me.Entity.extend(
         // Check for entity death
         if (this.health <= 0 & this.alive) {
             this.alive = false;
+            game.data.gold += this.reward;
             me.game.world.addChild(me.pool.pull("dyingSkeleton", this.pos.x, this.pos.y, this.dyingImage));
             me.game.world.removeChild(this);
         }
@@ -146,8 +148,8 @@ game.Skeleton = me.Entity.extend(
         }
         // Leave the map when reaching the end of the path and remove a life
         if (response.b.name == "Finish" && !game.data.missedSkeletons.includes(this)) {
-			game.data.missedSkeletons.push(this);
-			game.data.life -= 1;
+            game.data.missedSkeletons.push(this);
+            game.data.life -= 1;
             me.game.world.removeChild(this);
             return false;
         }
