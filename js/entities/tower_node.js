@@ -76,9 +76,8 @@ game.TowerSelectedNode = me.GUI_Object.extend(
     {
         if (this.locked == false) 
         {
-            me.game.world.removeChild(this.currentTower);
-            this.currentTower = this.parentTower;
-            this.selected = false;
+            this.parentTower.selected = false;
+            me.game.world.removeChild(this);
         }
 
         // don't propagate the event
