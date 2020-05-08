@@ -23,7 +23,7 @@ game.ExplodeTower = me.Entity.extend(
         this._super(me.Entity, "init", [x, y, settings]);
 		
 		// Set the image to the appropriate tower.
-        this.renderable.addAnimation("exist", [226]);
+        this.renderable.addAnimation("exist", [206]);
 
         // Set initial animation
         this.renderable.setCurrentAnimation("exist");
@@ -178,7 +178,7 @@ game.Bomb = me.Entity.extend({
         this._super(me.Entity, 'init', [x, y, settings]);
 
         // Set the image to the appropriate projectile.
-        this.renderable.addAnimation("exist", [297]);
+        this.renderable.addAnimation("exist", [252]);
 
         // Set initial animation
         this.renderable.setCurrentAnimation("exist");
