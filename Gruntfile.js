@@ -27,6 +27,7 @@ module.exports = function(grunt) {
           'js/screens/title.js',
           'js/screens/instructions.js',
           'js/screens/play.js',
+          'js/screens/nextLevel.js',
         ],
         dest: 'build/js/app.js'
       }
