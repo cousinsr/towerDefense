@@ -8,7 +8,7 @@ game.PlayScreen = me.Stage.extend({
 
     onResetEvent: function() {
         // Load first level with a black background covering the default melonJS background
-        me.levelDirector.loadLevel(TILE_LEVEL);
+        me.levelDirector.loadLevel(TILE_LEVELS[game.data.level]);
         me.game.world.addChild(new me.ColorLayer("background", "#373737"), 0);
 
         // Set composition of each wave for Level 01

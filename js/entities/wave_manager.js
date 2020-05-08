@@ -74,7 +74,8 @@ game.WaveManager = me.Entity.extend({
         }
         // Remove the wave manager from the game if all enemies have been added
         if (this.enemiesRemaining <= 0 && this.wave >= this.numWaves) {
-            me.game.world.removeChild(this);
+            me.state.change(me.state.READY);
+//            me.game.world.removeChild(this);
         }
     }
 });

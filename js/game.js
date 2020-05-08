@@ -13,7 +13,9 @@ var game = {
         // Wave count
         wave: 0,
         // Starting gold count
-        gold: START_GOLD
+        gold: START_GOLD,
+        // Starting level
+        level: 0
     },
 
     // Run on page load.
@@ -37,6 +39,7 @@ var game = {
         me.state.set(me.state.MENU, new game.TitleScreen());
         me.state.set(me.state.INFO, new game.InstructionScreen());
         me.state.set(me.state.PLAY, new game.PlayScreen());
+        me.state.set(me.state.READY, new game.NextLevelScreen());
 
         // Add the enemy skeleton objects to the entity pool
         me.pool.register("Skeleton", game.Skeleton);
