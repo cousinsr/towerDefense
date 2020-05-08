@@ -3,7 +3,7 @@ var TILE_WIDTH = 64;
 var TILE_HEIGHT = 64;
 var TILE_COUNT_WIDTH = 25;
 var TILE_COUNT_HEIGHT = 20;
-var TILE_LEVEL = "level02";				// To be used during development to work on your board
+var TILE_LEVEL = "level01";				// To be used during development to work on your board
 
 // Tower menu ids
 var TOWER_MENU_RANGE = 1;
