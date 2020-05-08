@@ -23,14 +23,14 @@ game.RangeTower = me.Entity.extend(
         this._super(me.Entity, "init", [x, y, settings]);
 		
 		// Set the image to the appropriate tower.
-        this.renderable.addAnimation("exist", [249]);
+        this.renderable.addAnimation("exist", [250]);
 
         // Set initial animation
         this.renderable.setCurrentAnimation("exist");
 		
 		// Set attack cooldown variables.
 		this.cooldownActive = false;
-		this.cooldownDuration = 2000; // Milliseconds
+		this.cooldownDuration = 1000; // Milliseconds
 		this.cooldownTimeCount = 0; // Milliseconds
 		
 		// Set attack range variable.
@@ -154,7 +154,7 @@ game.Missile = me.Entity.extend({
         this._super(me.Entity, 'init', [x, y, settings]);
 
         // Set the image to the appropriate projectile.
-        this.renderable.addAnimation("exist", [251]);
+        this.renderable.addAnimation("exist", [297]);
 
         // Set initial animation
         this.renderable.setCurrentAnimation("exist");
@@ -216,7 +216,7 @@ game.Missile = me.Entity.extend({
 		// Set the direction and speed of the projectile.
 		// Increasing the number in a product below will increase the speed of the projectile's movement
 		// with	respect to that axis.
-		this.body.setVelocity(Math.cos(targetAngle) * 6, Math.sin(targetAngle) * 6);
+		this.body.setVelocity(Math.cos(targetAngle) * 10, Math.sin(targetAngle) * 10);
 		
         // Check for collisions
         me.collision.check(this);
