@@ -94,7 +94,14 @@ game.Skeleton = me.Entity.extend(
         if (this.health <= 0 & this.alive) {
             this.alive = false;
             game.data.gold += this.reward;
-            me.game.world.addChild(me.pool.pull("dyingSkeleton", this.pos.x, this.pos.y, this.dyingImage));
+            var deadSkeleton = me.pool.pull("dyingSkeleton", this.pos.x, this.pos.y, this.dyingImage);
+            me.game.world.addChild(deadSkeleton);
+			if (!game.data.dyingEnemies.includes(deadSkeleton)) {
+				game.data.dyingEnemies.push(deadSkeleton);
+			}
+			if (game.data.enemies.includes(this)) {
+				game.data.enemies.splice(game.data.enemies.indexOf(this), 1);
+			}
             me.game.world.removeChild(this);
         }
 
@@ -147,8 +154,8 @@ game.Skeleton = me.Entity.extend(
             return false;
         }
         // Leave the map when reaching the end of the path and remove a life
-        if (response.b.name == "Finish" && !game.data.missedSkeletons.includes(this)) {
-            game.data.missedSkeletons.push(this);
+        if (response.b.name == "Finish" && game.data.enemies.includes(this)) {
+			game.data.enemies.splice(game.data.enemies.indexOf(this), 1);
             game.data.life -= 1;
             me.game.world.removeChild(this);
             return false;

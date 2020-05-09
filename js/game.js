@@ -16,12 +16,14 @@ var game = {
         gold: START_GOLD,
         // Current level
         level: 0,
-		
 		// Track data as of the start of the most recent level reached.
 		// Player life balance
 		lastStartingLife: START_LIFE,
 		// Player gold balance
-        lastStartingGold: START_GOLD
+        lastStartingGold: START_GOLD,
+		// Enemy arrays
+		enemies: [],
+		dyingEnemies: []
     },
 
     // Run on page load.
@@ -43,7 +45,7 @@ var game = {
     // Run on game resources loaded.
     "loaded" : function () {
         me.state.set(me.state.MENU, new game.TitleScreen());
-        me.state.set(me.state.INFO, new game.InstructionScreen());
+        me.state.set(me.state.SETTINGS, new game.InstructionScreen());
         me.state.set(me.state.PLAY, new game.PlayScreen());
         me.state.set(me.state.READY, new game.NextLevelScreen());
 		me.state.set(me.state.GAMEOVER, new game.GameOverScreen());
@@ -88,6 +90,9 @@ var game = {
         me.pool.register("Start", game.Start);
         me.pool.register("Finish", game.Finish);
 
+		// Add button objects
+        me.pool.register("PauseButton", game.PauseButton);
+		
         // Enable the keyboard for the tower attack target POC.
         me.input.bindKey(me.input.KEY.SPACE,  "shoot", true);
         me.input.unbindKey(me.input.KEY.SPACE);

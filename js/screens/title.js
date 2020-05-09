@@ -28,7 +28,7 @@ game.TitleScreen = me.Stage.extend({
         me.state.change(me.state.PLAY);
       }
 	  if (action === "space") {
-		me.state.change(me.state.INFO);
+		me.state.change(me.state.SETTINGS);
 	  }
     });
   },

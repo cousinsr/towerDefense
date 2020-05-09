@@ -32,6 +32,7 @@ game.DyingSkeleton = me.Entity.extend(
 
         // Set up countdown as a timer (in milliseconds) before the entity is removed
         this.countdown = 1400;
+		this.alive = true;
     },
 
     update : function (dt) {
@@ -44,6 +45,9 @@ game.DyingSkeleton = me.Entity.extend(
         // Remove the entity after the countdown reaches 0
         if (this.countdown <= 0) {
             me.game.world.removeChild(this);
+			if (game.data.dyingEnemies.includes(this)) {
+				game.data.dyingEnemies.splice(game.data.dyingEnemies.indexOf(this), 1);
+			}
         }
 
         return true;
