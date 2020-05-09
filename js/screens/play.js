@@ -38,8 +38,6 @@ game.PlayScreen = me.Stage.extend({
         me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 6.5*TILE_HEIGHT,
             TOWER_MENU_EXPLODE, "button75", TOWER_COST_EXPLODE));
 
-        // Reset player life balance.
-        game.data.life = 10;
         // Begin empty array of missed skeletons
         game.data.missedSkeletons = [];
 

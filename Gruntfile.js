@@ -28,6 +28,7 @@ module.exports = function(grunt) {
           'js/screens/instructions.js',
           'js/screens/play.js',
           'js/screens/nextLevel.js',
+		  'js/screens/gameOver.js',
         ],
         dest: 'build/js/app.js'
       }

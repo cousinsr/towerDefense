@@ -25,3 +25,6 @@ var ENEMY_GOLD_ARMORED = 15;
 // Gold values
 var START_GOLD = 100;
 var GOLD_LEVEL_REWARD = 50;
+
+// Life values:
+var START_LIFE = 10;
