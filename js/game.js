@@ -12,10 +12,16 @@ var game = {
         life: START_LIFE,
         // Wave count
         wave: 0,
-        // Starting gold count
+        // Player gold balance
         gold: START_GOLD,
-        // Starting level
-        level: 0
+        // Current level
+        level: 0,
+		
+		// Track data as of the start of the most recent level reached.
+		// Player life balance
+		lastStartingLife: START_LIFE,
+		// Player gold balance
+        lastStartingGold: START_GOLD
     },
 
     // Run on page load.

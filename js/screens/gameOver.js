@@ -24,34 +24,58 @@ game.GameOverScreen = me.Stage.extend({
 
 	// Bind necessary keys to navigate screens
     me.input.bindKey(me.input.KEY.SPACE, "space", true);
+	me.input.bindKey(me.input.KEY.BACKSPACE, "backspace", true);
+	me.input.bindKey(me.input.KEY.ENTER, "enter", true);
 
 	// Respond to keystrokes
     this.handler = me.event.subscribe(me.event.KEYDOWN, function (action, keyCode, edge) {
 		// Load the next screen image, one z-position higher than the last
         if (action === "space" && screenNum < lastScreen) {
 			screenNum++;
-			gameOverImage = new me.Sprite(0, 0, {
-					image: me.loader.getImage("gameover" + screenNum + "a"),
-				}
-			);
+			
+			// Check if the player lost at the first level.
+			if (game.data.level == 0) {
+				gameOverImage = new me.Sprite(0, 0, {
+						image: me.loader.getImage("gameover" + screenNum + "a"),
+					}
+				);
+			// The player lost at level02 or later.
+			} else {
+				gameOverImage = new me.Sprite(0, 0, {
+						image: me.loader.getImage("gameover" + screenNum + "b"),
+					}
+				);
+			}
+			
 			gameOverImage.anchorPoint.set(0, 0);
 			gameOverImage.scale(me.game.viewport.width / gameOverImage.width,
 				me.game.viewport.height / gameOverImage.height);
 			me.game.world.addChild(gameOverImage, screenNum);
         }
 		// Return to the game title screen after finishing the game over screens.
-        else if (action === "space") {
-            game.data.life = START_LIFE;
+        else if ((action === "space" && game.data.level == 0) ||
+			(action === "enter" && screenNum == lastScreen)) {
+            
+			game.data.life = START_LIFE;
 			game.data.wave = 0;
 			game.data.gold = START_GOLD;
 			game.data.level = 0;
 			me.state.change(me.state.MENU);
+        }
+		// Return to the play screen at the level after level01 where the player lost, if they want.
+        else if (action === "backspace" && game.data.level > 0) {
+            game.data.life = game.data.lastStartingLife;
+			game.data.wave = 0;
+			game.data.gold = game.data.lastStartingGold;
+			me.state.change(me.state.PLAY);
         }
     });
   },
 
   onDestroyEvent : function () {
     me.input.unbindKey(me.input.KEY.SPACE);
+	me.input.unbindKey(me.input.KEY.BACKSPACE);
+	me.input.unbindKey(me.input.KEY.ENTER);
     me.event.unsubscribe(this.handler);
   }
 });

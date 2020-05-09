@@ -24,11 +24,16 @@ game.NextLevelScreen = me.Stage.extend(
         // Bind necessary keys to navigate screens
         me.input.bindKey(me.input.KEY.SPACE, "space", true);
 
-        // Begin the game if enter is pressed or there is a left click
+        // Respond to keystrokes.
         this.handler = me.event.subscribe(me.event.KEYDOWN, function (action, keyCode, edge)
         {
-            if (action === "space") {
-                game.data.level += 1;
+            // Go to the next level if the user presses spacebar.
+			if (action === "space") {
+                // Save player life and gold balance as of start of next level.
+				game.data.lastStartingLife = game.data.life;
+				game.data.lastStartingGold = game.data.gold;
+				
+				game.data.level += 1;
                 me.state.change(me.state.PLAY);
             }
         });
