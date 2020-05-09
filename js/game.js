@@ -9,7 +9,7 @@ var game = {
     // Global game information
     data : {
         // Player life balance
-        life: 0,
+        life: START_LIFE,
         // Wave count
         wave: 0,
         // Starting gold count
@@ -40,6 +40,7 @@ var game = {
         me.state.set(me.state.INFO, new game.InstructionScreen());
         me.state.set(me.state.PLAY, new game.PlayScreen());
         me.state.set(me.state.READY, new game.NextLevelScreen());
+		me.state.set(me.state.GAMEOVER, new game.GameOverScreen());
 
         // Add the enemy skeleton objects to the entity pool
         me.pool.register("Skeleton", game.Skeleton);
