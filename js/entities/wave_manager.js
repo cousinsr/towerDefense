@@ -46,7 +46,6 @@ game.WaveManager = me.Entity.extend({
 				if (this.startOfWave) {
 					this.startOfWave = false;
 					game.data.wave += 1;
-					console.log(game.data.enemies);
 				}
 				// Update timer and enemy count
 				this.timeBeforeNextEnemy = 1000;

@@ -60,7 +60,14 @@ game.RangeTower = me.Entity.extend(
 			
 			// Check if there was a previous target attacked by this tower.
 			if (this.lastTargetGUID != null) {
-				var lastTarget = me.game.world.getChildByGUID(this.lastTargetGUID);
+				// Attempt to get the previous target object.
+				var i, lastTarget = null;
+				for (i = 0; i < game.data.enemies.length; i++) {
+					if (game.data.enemies[i].GUID == this.lastTargetGUID) {
+						lastTarget = game.data.enemies[i];
+						break;
+					}
+				}
 				
 				// Check if the last target attacked by this tower still exists in the game world.
 				if (lastTarget != null) {
@@ -78,22 +85,19 @@ game.RangeTower = me.Entity.extend(
 			
 			// Check if a new target should be searched for.
 			if (target == null) {
-				// Find all targets in the world that have a name of "enemy".
-				var targetsArray = me.game.world.getChildByName("enemy");
-				
 				// Select the closest target within range of the tower.
 				var i, shortestTargetDistance = this.range + 7;
-				for (i = 0; i < targetsArray.length; i++) {
+				for (i = 0; i < game.data.enemies.length; i++) {
 					var targetDistance = Math.sqrt(
-						Math.pow(targetsArray[i].pos.x - this.pos.x, 2) +
-						Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
+						Math.pow(game.data.enemies[i].pos.x - this.pos.x, 2) +
+						Math.pow(game.data.enemies[i].pos.y - this.pos.y, 2)
 					);
 					
 					// Check if the target is within range and closer to this tower than previously
 					// checked targets.
 					if ((targetDistance <= this.range) && (targetDistance < shortestTargetDistance)) {
 						shortestTargetDistance = targetDistance;
-						target = targetsArray[i];
+						target = game.data.enemies[i];
 					}
 				}
 			}
@@ -174,20 +178,41 @@ game.Missile = me.Entity.extend({
 		this.rotated = false;
 		
 		// Track the last known coordinates of the target.
-		var target = me.game.world.getChildByGUID(this.targetGUID);
+		var i, target = null;
+		for (i = 0; i < game.data.enemies.length; i++) {
+			if (game.data.enemies[i].GUID == this.targetGUID) {
+				target = game.data.enemies[i];
+				break;
+			}
+		}
 		this.targetLastXPos = target.pos.x;
 		this.targetLastYPos = target.pos.y;
 		
-		// freeAgent is fale if the projectile has an exclusive target.
+		// freeAgent is false if the projectile has an exclusive target.
 		// freeAgent is true if the projectile is allowed to collide with any enemy target.
 		this.freeAgent = false;
+		
+		this.positionMarkerTarget = null;
     },
 
     update : function (dt) {
         // Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 		
-		var target = me.game.world.getChildByGUID(this.targetGUID);
+		var target = null;
+		// Check if the missile has an assigned enemy target.
+		if (!this.freeAgent) {
+			var i;
+			for (i = 0; i < game.data.enemies.length; i++) {
+				if (game.data.enemies[i].GUID == this.targetGUID) {
+					target = game.data.enemies[i];
+					break;
+				}
+			}
+		// The target is a positionMarker entity.
+		} else {
+			target = this.positionMarkerTarget;
+		}
 		
 		// Confirm the target still exists.
 		if (target != null) {
@@ -201,6 +226,7 @@ game.Missile = me.Entity.extend({
 					);
 			this.targetGUID = target.GUID;
 			this.freeAgent = true;
+			this.positionMarkerTarget = target;
 		}
 		
 		// Calculate the angle of the target relative to this projectile.
@@ -243,8 +269,7 @@ game.Missile = me.Entity.extend({
 			}
 			// Check if a static position marker needs to be removed.
 			if (this.freeAgent) {
-				var target = me.game.world.getChildByGUID(this.targetGUID);
-				me.game.world.removeChild(target);
+				me.game.world.removeChild(this.positionMarkerTarget);
 			}
 			
 			return true;
