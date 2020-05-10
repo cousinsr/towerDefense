@@ -59,22 +59,19 @@ game.ExplodeTower = me.Entity.extend(
 		if (this.cooldownActive == false) {
 			var target = null;
 			
-			// Find all targets in the world that have a name of "enemy".
-			var targetsArray = me.game.world.getChildByName("enemy");
-			
 			// Select the closest target within range of the tower.
 			var i, shortestTargetDistance = this.range + 7;
-			for (i = 0; i < targetsArray.length; i++) {
+			for (i = 0; i < game.data.enemies.length; i++) {
 				var targetDistance = Math.sqrt(
-					Math.pow(targetsArray[i].pos.x - this.pos.x, 2) +
-					Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
+					Math.pow(game.data.enemies[i].pos.x - this.pos.x, 2) +
+					Math.pow(game.data.enemies[i].pos.y - this.pos.y, 2)
 				);
 				
 				// Check if the target is within range and closer to this tower than previously
 				// checked targets.
 				if ((targetDistance <= this.range) && (targetDistance < shortestTargetDistance)) {
 					shortestTargetDistance = targetDistance;
-					target = targetsArray[i];
+					target = game.data.enemies[i];
 				}
 			}
 			
@@ -194,7 +191,7 @@ game.Bomb = me.Entity.extend({
 		this.hit = null;
 
 		// Set the projectile target and initial rotation (towards target) status.
-		this.targetGUID = targetGUID;
+		this.positionMarkerTarget = me.game.world.getChildByGUID(targetGUID);
 		this.rotated = false;
 		
 		// Set the explosion radius of this bomb.
@@ -206,7 +203,7 @@ game.Bomb = me.Entity.extend({
         this._super(me.Entity, "update", [dt]);
 		
 		// Calculate the angle of the target relative to this projectile.
-		var target = me.game.world.getChildByGUID(this.targetGUID);
+		var target = this.positionMarkerTarget;
 		var targetAngle = 0;
 		
 		// Confirm the target still exists.
@@ -239,7 +236,7 @@ game.Bomb = me.Entity.extend({
 	
 	onCollision : function (response) {
         // Check if the projectile hit its target.
-        if (response.b.GUID == this.targetGUID) {
+        if (response.b.GUID == this.positionMarkerTarget.GUID) {
 			// Remove the projectile from the map.
 			me.game.world.removeChild(response.a);
 			
@@ -252,88 +249,29 @@ game.Bomb = me.Entity.extend({
 			// Remove the position marker from the map.
 			me.game.world.removeChild(response.b);
 			
-			/*
-			// Generate effects around the point of impact and within the bomb's explosion radius.
-			var blastX = 0, blastY = 0;
-			// Fill each row with effects.
-			while (blastY < this.explosionRadius) {
-				// Fill each column with effects.
-				while (blastX < this.explosionRadius) {
-					// Check the distance between the point to place an effect at, and the point of impact.
-					var pointDistance = Math.sqrt(
-						Math.pow(blastX, 2) + Math.pow(blastY, 2)
-					);
-					
-					// Set the duration of the effect at pointDistance from the point of impact.
-					// The further out the effect is from the point of impact, the lower its duration.
-					var effectLifetime = 500 *
-						(this.explosionRadius - pointDistance) / this.explosionRadius;
-					
-					// Spawn effects in each quadrant, and at random.
-					// Ensure that effects are only generated inside the bomb's explosion radius.
-					if (pointDistance <= this.explosionRadius) {
-						if (Math.floor(Math.random() * 6) == 0) {
-							me.game.world.addChild(
-								me.pool.pull("explosionEffect",
-								blastSite.pos.x + blastX, blastSite.pos.y + blastY,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, null, effectLifetime)
-							);
-						}
-						if (Math.floor(Math.random() * 6) == 0) {
-							me.game.world.addChild(
-								me.pool.pull("explosionEffect",
-								blastSite.pos.x - blastX, blastSite.pos.y + blastY,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, null, effectLifetime)
-							);
-						}
-						if (Math.floor(Math.random() * 6) == 0) {
-							me.game.world.addChild(
-								me.pool.pull("explosionEffect",
-								blastSite.pos.x + blastX, blastSite.pos.y - blastY,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, null, effectLifetime)
-							);
-						}
-						if (Math.floor(Math.random() * 6) == 0) {
-							me.game.world.addChild(
-								me.pool.pull("explosionEffect",
-								blastSite.pos.x - blastX, blastSite.pos.y - blastY,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, null, effectLifetime)
-							);
-						}
-					}
-					
-					blastX += TILE_WIDTH / 4;
-				}
-				blastX = 0;
-				blastY += TILE_HEIGHT / 4;
-			}*/
-			
-			// Find all targets in the world that have a name of "enemy".
-			var targetsArray = me.game.world.getChildByName("enemy");
-			
 			// Distribute damage to each target within the bomb's explosion radius.
 			var i;
-			for (i = 0; i < targetsArray.length; i++) {
+			for (i = 0; i < game.data.enemies.length; i++) {
 				// The targetDistance calculation uses the coordinates of the target hit (blastSite)
 				// instead of the projectile (response.a, or "this") because the explosion is intended
 				// emanate from the point of impact that is where the projectile meets the target.
 				// The projectile position is to the left of that point of impact by TILE_WIDTH.
 				var targetDistance = Math.sqrt(
-					Math.pow(targetsArray[i].pos.x - blastSite.pos.x, 2) +
-					Math.pow(targetsArray[i].pos.y - blastSite.pos.y, 2)
+					Math.pow(game.data.enemies[i].pos.x - blastSite.pos.x, 2) +
+					Math.pow(game.data.enemies[i].pos.y - blastSite.pos.y, 2)
 				);
 				
 				// Check if the target is within the bomb's explosion radius.
 				if (targetDistance <= this.explosionRadius) {
 					// Lower the health of the target.
-					targetsArray[i].health -= this.damage;
+					game.data.enemies[i].health -= this.damage;
 					// Have the target flicker if it is still alive, and apply an effect to the target.
-					if (targetsArray[i].health > 0) {
-						targetsArray[i].renderable.flicker(1000);
+					if (game.data.enemies[i].health > 0) {
+						game.data.enemies[i].renderable.flicker(1000);
 						me.game.world.addChild(
 								me.pool.pull("explosionEffect",
-								targetsArray[i].pos.x, targetsArray[i].pos.y,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, targetsArray[i].GUID, 1000)
+								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, game.data.enemies[i].GUID, 1000)
 						);
 					// The target died, so place an effect at its current position.
 					} else {
@@ -344,7 +282,7 @@ game.Bomb = me.Entity.extend({
 						
 						me.game.world.addChild(
 								me.pool.pull("explosionEffect",
-								targetsArray[i].pos.x, targetsArray[i].pos.y,
+								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
 								{width: TILE_WIDTH, height: TILE_HEIGHT}, null, effectLifetime)
 						);
 					}
@@ -402,11 +340,19 @@ game.ExplosionEffect = me.Entity.extend(
 		// Check if the effect needs to move to stay on target.
 		if (this.targetGUID != null) {
 			// Confirm that the target still exists.
-			var target = me.game.world.getChildByGUID(this.targetGUID);
+			var i, target = null;
+			for (i = 0; i < game.data.enemies.length; i++) {
+				if (game.data.enemies[i].GUID == this.targetGUID) {
+					target = game.data.enemies[i];
+					break;
+				}
+			}
+			
 			if (target != null) {
 				// Match this effect's position to the target's position.
 				this.pos.x = target.pos.x;
 				this.pos.y = target.pos.y;
+			// The target no longer exists, so remove this effect from the play screen.
 			} else {
 				me.game.world.removeChild(this);
 			}

@@ -46,20 +46,17 @@ game.StunTower = me.Entity.extend(
 		if (this.cooldownActive == false) {
 			var targetsInRangeGUIDs = [];
 			
-			// Find all targets in the world that have a name of "enemy".
-			var targetsArray = me.game.world.getChildByName("enemy");
-			
 			// Select the targets within range of the tower.
 			var i;
-			for (i = 0; i < targetsArray.length; i++) {
+			for (i = 0; i < game.data.enemies.length; i++) {
 				var targetDistance = Math.sqrt(
-					Math.pow(targetsArray[i].pos.x - this.pos.x, 2) +
-					Math.pow(targetsArray[i].pos.y - this.pos.y, 2)
+					Math.pow(game.data.enemies[i].pos.x - this.pos.x, 2) +
+					Math.pow(game.data.enemies[i].pos.y - this.pos.y, 2)
 				);
 				
 				// Check if the target is within range of this tower.
 				if (targetDistance <= this.range) {
-					targetsInRangeGUIDs.push(targetsArray[i].GUID);
+					targetsInRangeGUIDs.push(game.data.enemies[i].GUID);
 				}
 			}
 			
@@ -95,8 +92,13 @@ game.StunTower = me.Entity.extend(
 				// Reduce the speed of each target within range, and flicker each impacted target.
 				var j;
 				for (j = 0; j < targetsInRangeGUIDs.length; j++) {
-					var singleTarget = me.game.world.getChildByGUID(targetsInRangeGUIDs[j]);
-					//singleTarget.speed *= this.speedModifier;
+					var k, singleTarget = null;
+					for (k = 0; k < game.data.enemies.length; k++) {
+						if (game.data.enemies[k].GUID == targetsInRangeGUIDs[j]) {
+							singleTarget = game.data.enemies[k];
+							break;
+						}
+					}
 					singleTarget.renderable.flicker(500);
 					singleTarget.stunned = true;
 					singleTarget.stunTimer = this.stunTime;
@@ -166,12 +168,20 @@ game.StunEffect = me.Entity.extend(
 		
 		// Check if the effect needs to move to stay on target.
 		if (this.targetGUID != null) {
-			// Confirm that the target still exists.
-			var target = me.game.world.getChildByGUID(this.targetGUID);
+			// Check that the target still exists.
+			var i, target = null;
+			for (i = 0; i < game.data.enemies.length; i++) {
+				if (game.data.enemies[i].GUID == this.targetGUID) {
+					target = game.data.enemies[i];
+					break;
+				}
+			}
+
 			if (target != null) {
 				// Match this effect's position to the target's position.
 				this.pos.x = target.pos.x;
 				this.pos.y = target.pos.y;
+			// The target no longer exists, so remove this effect from the play screen.
 			} else {
 				me.game.world.removeChild(this);
 			}

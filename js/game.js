@@ -50,6 +50,7 @@ var game = {
         me.state.set(me.state.READY, new game.NextLevelScreen());
 		me.state.set(RESTART, new game.RestartScreen());
 		me.state.set(me.state.GAMEOVER, new game.GameOverScreen());
+		me.state.set(me.state.GAME_END, new game.GameEndScreen());
 
         // Add the enemy skeleton objects to the entity pool
         me.pool.register("Skeleton", game.Skeleton);

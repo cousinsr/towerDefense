@@ -94,8 +94,15 @@ game.WaveManager = me.Entity.extend({
 			if (game.data.enemies.length <= 0 && game.data.dyingEnemies.length <= 0) {
 				this.levelCompleteCountdown -= dt;
 				if (this.levelCompleteCountdown <= 0) {
-					// Change to screen between levels
-					me.state.change(me.state.READY);
+					// Check if there are more levels to play.
+					if (game.data.level < TILE_LEVELS.length - 1) {
+						// Change to screen between levels
+						me.state.change(me.state.READY);
+					// The player has completed all levels in the game.
+					} else {
+						// Show the game end (player victory) screen.
+						me.state.change(me.state.GAME_END);
+					}
 				}
 			}
 		}
