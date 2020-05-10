@@ -52,7 +52,7 @@ game.ResumeButton = me.GUI_Object.extend({
 		me.game.world.removeChild(this.menu[2]);
 		me.state.resume();
 		return false;
-	},
+	}
 });
 
 game.RestartButton = me.GUI_Object.extend({
@@ -69,7 +69,7 @@ game.RestartButton = me.GUI_Object.extend({
 		// Code to return to level introduction screen
 		me.state.resume();
 		this.pause.menuButtons = [];
-		me.state.change(me.state.MENU);
+		me.state.change(RESTART);
 		return false;
 	}
 });

@@ -29,6 +29,9 @@ var GOLD_LEVEL_REWARD = 50;
 // Life values:
 var START_LIFE = 10;
 
+// User states:
+var RESTART = me.state.USER + 0;
+
 // Level enemy compositions:
 
 // Set composition of each wave for Level 01

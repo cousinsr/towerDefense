@@ -31,8 +31,10 @@ game.WaveManager = me.Entity.extend({
 		this.startOfWave = true;
 		this.waitingForNextLevel = false;
 		this.levelCompleteCountdown = 3000;
-		// Reset the global wave variable
+		// Reset the global variables
 		game.data.wave = 0;
+		game.data.enemies = [];
+		game.data.dyingEnemies = [];
     },
 	
     update : function (dt) {
@@ -46,7 +48,6 @@ game.WaveManager = me.Entity.extend({
 				if (this.startOfWave) {
 					this.startOfWave = false;
 					game.data.wave += 1;
-					console.log(game.data.enemies);
 				}
 				// Update timer and enemy count
 				this.timeBeforeNextEnemy = 1000;
