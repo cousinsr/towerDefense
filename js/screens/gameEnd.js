@@ -40,7 +40,7 @@ game.GameEndScreen = me.Stage.extend({
 				me.game.viewport.height / gameOverImage.height);
 			me.game.world.addChild(gameOverImage, screenNum);
         }
-		// Return to the game title screen after finishing the game over screens.
+		// Return to the game title screen after finishing the game end screens.
         else if (action === "space") {
 			game.data.life = START_LIFE;
 			game.data.wave = 0;

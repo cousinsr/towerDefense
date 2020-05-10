@@ -29,7 +29,7 @@ var game = {
     // Run on page load.
     "onload" : function () {
         // Initialize the video.
-        if (!me.video.init(TILE_WIDTH*TILE_COUNT_WIDTH, TILE_HEIGHT*TILE_COUNT_HEIGHT, {wrapper : "screen", scale : "auto", scaleMethod : "fit"})) {
+        if (!me.video.init(TILE_WIDTH*TILE_COUNT_WIDTH, TILE_HEIGHT*TILE_COUNT_HEIGHT, {wrapper : "screen", renderer : me.video.CANVAS, scale : "auto", scaleMethod : "fit"})) {
             alert("Your browser does not support HTML5 canvas.");
             return;
         }
