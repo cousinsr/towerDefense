@@ -27,7 +27,10 @@ game.ExplodeTower = me.Entity.extend(
 
         // Set initial animation
         this.renderable.setCurrentAnimation("exist");
-		
+
+        // Set tower cost
+        this.towerCost = TOWER_COST_EXPLODE;
+
 		// Set attack cooldown variables.
 		this.cooldownActive = false;
 		this.cooldownDuration = 6000; // Milliseconds

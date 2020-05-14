@@ -24,12 +24,14 @@ module.exports = function(grunt) {
           'js/entities/dying_skeleton.js',
           'js/entities/path_objects.js',
           'js/entities/wave_manager.js',
+          'js/entities/pause_buttons.js',
           'js/screens/title.js',
           'js/screens/instructions.js',
           'js/screens/play.js',
           'js/screens/nextLevel.js',
-		  'js/screens/gameOver.js',
-		  'js/screens/gameEnd.js',
+          'js/screens/gameOver.js',
+          'js/screens/gameEnd.js',
+          'js/screens/restart.js',
         ],
         dest: 'build/js/app.js'
       }

@@ -13,7 +13,10 @@ game.StunTower = me.Entity.extend(
 
         // Construct and postion tower in the center of tower node.
         this._super(me.Entity, "init", [x, y, settings]);
-		
+
+        // Set tower cost
+        this.towerCost = TOWER_COST_STUN;
+
 		// Set the fraction of target speed that will be taken away upon hit.
 		// this.speedModifier = 0.75;
 		

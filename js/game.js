@@ -16,14 +16,16 @@ var game = {
         gold: START_GOLD,
         // Current level
         level: 0,
-		// Track data as of the start of the most recent level reached.
-		// Player life balance
-		lastStartingLife: START_LIFE,
-		// Player gold balance
+        // Tower selected for selling
+        sellTower: false,
+        // Track data as of the start of the most recent level reached.
+        // Player life balance
+        lastStartingLife: START_LIFE,
+        // Player gold balance
         lastStartingGold: START_GOLD,
-		// Enemy arrays
-		enemies: [],
-		dyingEnemies: []
+        // Enemy arrays
+        enemies: [],
+        dyingEnemies: []
     },
 
     // Run on page load.

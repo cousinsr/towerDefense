@@ -27,7 +27,10 @@ game.RangeTower = me.Entity.extend(
 
         // Set initial animation
         this.renderable.setCurrentAnimation("exist");
-		
+
+        // Set tower cost
+        this.towerCost = TOWER_COST_RANGE;
+
 		// Set attack cooldown variables.
 		this.cooldownActive = false;
 		this.cooldownDuration = 1000; // Milliseconds

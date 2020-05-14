@@ -15,12 +15,21 @@ game.PlayScreen = me.Stage.extend({
         me.game.world.addChild(this.waveManager);
 
         // Add static tower menu buttons
-        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 2.5*TILE_HEIGHT,
-            TOWER_MENU_RANGE, "button50", TOWER_COST_RANGE));
-        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 4.5*TILE_HEIGHT,
-            TOWER_MENU_STUN, "button50", TOWER_COST_STUN));
-        me.game.world.addChild(me.pool.pull("TowerMenuItem", 23*TILE_WIDTH, 6.5*TILE_HEIGHT,
-            TOWER_MENU_EXPLODE, "button75", TOWER_COST_EXPLODE));
+        this.towerMenuRange = new game.TowerMenuItem(23*TILE_WIDTH, 2.5*TILE_HEIGHT,
+            TOWER_MENU_RANGE, TOWER_COST_RANGE);
+        me.game.world.addChild(this.towerMenuRange);
+
+        this.towerMenuStun = new game.TowerMenuItem(23*TILE_WIDTH, 4.5*TILE_HEIGHT,
+            TOWER_MENU_STUN, TOWER_COST_STUN);
+        me.game.world.addChild(this.towerMenuStun);
+
+        this.towerMenuExplode = new game.TowerMenuItem(23*TILE_WIDTH, 6.5*TILE_HEIGHT,
+            TOWER_MENU_EXPLODE, TOWER_COST_EXPLODE)
+        me.game.world.addChild(this.towerMenuExplode);
+
+        this.towerMenuSell = new game.TowerMenuItem(23*TILE_WIDTH, 8.5*TILE_HEIGHT,
+            TOWER_MENU_SELL, 0)
+        me.game.world.addChild(this.towerMenuSell);
 
         // Add the HUD to the game
         this.HUD = new game.HUD.Container();
@@ -30,6 +39,10 @@ game.PlayScreen = me.Stage.extend({
     onDestroyEvent: function() {
         // Remove the HUD from the game world
         me.game.world.removeChild(this.HUD);
-		me.game.world.removeChild(this.waveManager);
+        me.game.world.removeChild(this.waveManager);
+        me.game.world.removeChild(this.towerMenuRange);
+        me.game.world.removeChild(this.towerMenuStun);
+        me.game.world.removeChild(this.towerMenuExplode);
+        me.game.world.removeChild(this.towerMenuSell);
     }
 });

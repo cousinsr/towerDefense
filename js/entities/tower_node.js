@@ -25,22 +25,38 @@ game.TowerNode = me.GUI_Object.extend(
     // Change to selected tower object if a tower hasn't already been placed.
     onClick: function (event)
     {
-        if ((this.locked == false) && (game.data.gold >= TOWER_COST_RANGE)) 
-        {
-            // Check if any other tower nodes are already selected.
-            var towerNodes = me.game.world.getChildByName("TowerNode");
-            for (var i = 0; i < towerNodes.length; i++)
-                if (towerNodes[i].selected)
+        // Check if any other tower nodes are already selected.
+        var towerNodes = me.game.world.getChildByName("TowerNode");
+        for (var i = 0; i < towerNodes.length; i++)
+            if (towerNodes[i].selected)
+            {
+                towerNodes[i].selected = false;
+                // Remove the selected tower node, if the node doesn't have a tower.
+                if (game.data.sellTower == false)
                 {
-                    towerNodes[i].selected = false;
                     me.game.world.removeChild(towerNodes[i].currentTower);
                     towerNodes[i].currentTower = towerNodes[i];
                 }
+            }
 
-            // Select the existing tower.
+        // If this node is locked, select to sell tower.
+        if (this.locked == true)
+        {
             this.selected = true;
-            this.currentTower = me.game.world.addChild(
-                new game.TowerSelectedNode(this.x, this.y, this.parentTower));
+            game.data.sellTower = true;
+        }
+
+        // The node is not locked so select it if there is enough gold to purchase a tower.
+        else 
+        {
+            game.data.sellTower = false;
+            if (game.data.gold >= TOWER_COST_RANGE)
+            {
+                // Select the existing tower.
+                this.selected = true;
+                this.currentTower = me.game.world.addChild(
+                    new game.TowerSelectedNode(this.x, this.y, this.parentTower));
+            }
         }
 
         // don't propagate the event
