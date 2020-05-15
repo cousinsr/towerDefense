@@ -9,6 +9,7 @@ module.exports = function(grunt) {
           'lib/melonjs.js',
           'lib/plugins/**/*.js',
           'js/constants.js',
+          'js/levelComp.js',
           'js/game.js',
           'build/js/resources.js',
           'js/entities/HUD.js',
