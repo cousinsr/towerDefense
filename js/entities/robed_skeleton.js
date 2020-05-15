@@ -11,11 +11,12 @@ game.RobedSkeleton = game.Skeleton.extend(
     init: function (x, y)
     { 
         // Set the attributes for calling the constructor
-        var speed = 150;
+        var speed = 125;
+		var speedRange = 50;
         var health = 8;
         var reward = ENEMY_GOLD_ROBED;
 
         // Call the parent constructor
-        this._super(game.Skeleton, 'init', [x, y, "robed_skeleton", speed, health, reward]);
+        this._super(game.Skeleton, 'init', [x, y, "robed_skeleton", speed, speedRange, health, reward]);
     }
 });

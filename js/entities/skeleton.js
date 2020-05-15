@@ -16,7 +16,7 @@
  ********************************************************************/
 game.Skeleton = me.Entity.extend(
 {
-    init: function (x, y, skeletonImage, speed, health, reward) { 
+    init: function (x, y, skeletonImage, speed, speedRange, health, reward) { 
         // Set the image to the appropriate skeleton
         settings = {};
         settings.image = skeletonImage;
@@ -41,9 +41,10 @@ game.Skeleton = me.Entity.extend(
         this.renderable.setCurrentAnimation("walkRight");
 
         // Set up initial attributes of this enemy
-        this.speed = speed;
-        this.normalSpeed = speed;
-        this.stunnedSpeed = speed / 2;
+		var speedModifier = Math.floor(Math.random() * speedRange);
+        this.speed = speed + speedModifier;
+        this.normalSpeed = this.speed;
+        this.stunnedSpeed = this.speed / 2;
         this.health = health;
         this.reward = reward;
         this.orientation = "RIGHT";
@@ -51,9 +52,12 @@ game.Skeleton = me.Entity.extend(
         this.alive = true;
         this.stunned = false;
         this.stunTimer = 0;
-    },
+   },
 
     update : function (dt) {
+		if (game.data.isPaused) {
+			return true;
+		}
         // Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 

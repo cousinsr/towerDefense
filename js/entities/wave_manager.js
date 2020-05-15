@@ -38,6 +38,9 @@ game.WaveManager = me.Entity.extend({
     },
 	
     update : function (dt) {
+		if (game.data.isPaused) {
+			return true;
+		}
         // Update the wave manager until all enemies have been added to the level
 		if (!this.waitingForNextLevel) {
 			// Update timer

@@ -46,6 +46,9 @@ game.ExplodeTower = me.Entity.extend(
     },
 	
 	update : function (dt) {
+		if (game.data.isPaused) {
+			return true;
+		}
 		// Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 
@@ -152,8 +155,9 @@ game.PositionMarker = me.Entity.extend(
 
     update : function (dt) {
 		// Update the animation appropriately
-        this._super(me.Entity, "update", [dt]);
-		
+		if (!game.data.isPaused) {
+            this._super(me.Entity, "update", [dt]);
+		}
 		return true;
     },
 
@@ -202,6 +206,9 @@ game.Bomb = me.Entity.extend({
     },
 
     update : function (dt) {
+		if (game.data.isPaused) {
+			return true;
+		}
         // Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 		
@@ -337,6 +344,9 @@ game.ExplosionEffect = me.Entity.extend(
     },
 
     update : function (dt) {
+		if (game.data.isPaused) {
+			return true;
+		}
 		// Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 		

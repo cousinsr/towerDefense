@@ -23,6 +23,8 @@ var game = {
         lastStartingLife: START_LIFE,
         // Player gold balance
         lastStartingGold: START_GOLD,
+		// Pause tracker
+		isPaused: false,
         // Enemy arrays
         enemies: [],
         dyingEnemies: []

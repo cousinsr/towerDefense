@@ -45,6 +45,9 @@ game.RangeTower = me.Entity.extend(
     },
 	
 	update : function (dt) {
+		if (game.data.isPaused) {
+			return true;
+		}
 		// Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 
@@ -199,6 +202,9 @@ game.Missile = me.Entity.extend({
     },
 
     update : function (dt) {
+		if (game.data.isPaused) {
+			return false;
+		}
         // Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 		
@@ -324,6 +330,9 @@ game.GroundDecal = me.Entity.extend(
     },
 
     update : function (dt) {
+		if (game.data.isPaused) {
+			return true;
+		}
 		// Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 		

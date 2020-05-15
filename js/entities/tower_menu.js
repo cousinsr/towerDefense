@@ -35,12 +35,12 @@ game.TowerMenuItem = me.GUI_Object.extend(
     onClick: function (event)
     {
         // single click:
-        if (this.confirm == false) {
+        if (this.confirm == false && !game.data.isPaused) {
             this.confirm = true;
 
         // double click:
         }
-        else
+        else if (!game.data.isPaused)
         {
             // Find the selected tower node
             var towerNodes = me.game.world.getChildByName("TowerNode");

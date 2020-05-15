@@ -33,6 +33,9 @@ game.StunTower = me.Entity.extend(
     },
 	
 	update : function (dt) {
+		if (game.data.isPaused) {
+			return true;
+		}
 		// Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 
@@ -166,6 +169,9 @@ game.StunEffect = me.Entity.extend(
     },
 
     update : function (dt) {
+		if (game.data.isPaused) {
+			return true;
+		}
 		// Update the animation appropriately
         this._super(me.Entity, "update", [dt]);
 		
