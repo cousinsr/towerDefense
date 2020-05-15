@@ -52,6 +52,7 @@ game.Skeleton = me.Entity.extend(
         this.alive = true;
         this.stunned = false;
         this.stunTimer = 0;
+		this.pastDecision = null;
    },
 
     update : function (dt) {
@@ -156,6 +157,38 @@ game.Skeleton = me.Entity.extend(
             this.renderable.setCurrentAnimation("walkRight");
             this.pos.y = response.b.pos.y + modifier;
             return false;
+        }
+		// If appropriate make a choice on whether or not to turn right
+        if (response.b.pos.x == this.pos.x && response.b.name == "DecisionPoint"
+		                                   && response.b.opt == "RIGHT" && this.pastDecision != response.b.group
+			                               && this.orientation != "LEFT" && this.orientation != "RIGHT") {
+			this.pastDecision = response.b.group;
+			if (Math.random() > 0.5) {
+				var modifier = 8;
+                if (this.orientation == "DOWN") {
+                    modifier = -64;
+                }
+                this.orientation = "RIGHT";
+                this.renderable.setCurrentAnimation("walkRight");
+                this.pos.y = response.b.pos.y + modifier;
+                return false;
+			}
+        }
+		// If appropriate make a choice on whether or not to turn up
+        if (response.b.pos.y == this.pos.y && response.b.name == "DecisionPoint"
+		                                   && response.b.opt == "UP" && this.pastDecision != response.b.group
+			                               && this.orientation != "DOWN" && this.orientation != "UP") {
+			this.pastDecision = response.b.group;
+			if (Math.random() > 0.5) {
+                var modifier = 8;
+                if (this.orientation == "RIGHT") {
+                    modifier = -64;
+                }
+                this.orientation = "UP";
+                this.renderable.setCurrentAnimation("walkUp");
+                this.pos.x = response.b.pos.x + modifier;
+                return false;
+			}
         }
         // Leave the map when reaching the end of the path and remove a life
         if (response.b.name == "Finish" && game.data.enemies.includes(this)) {

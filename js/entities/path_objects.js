@@ -27,6 +27,14 @@ game.RightTurn = me.Entity.extend({
     }
 });
 
+game.DecisionPoint = me.Entity.extend({
+    init: function (x, y, settings) {
+        this._super(me.Entity, 'init', [x, y , settings]);
+		this.opt = settings.opt;
+		this.group = settings.group;
+    }
+});
+
 /********************************************************************
  * This class simply allows Tiled to include start and finish objects
  * to indicate where a skeleton entity enters and leaves the path.

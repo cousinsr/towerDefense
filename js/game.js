@@ -95,6 +95,9 @@ var game = {
         // Add the spawn point and finishing zone to the game
         me.pool.register("Start", game.Start);
         me.pool.register("Finish", game.Finish);
+		
+		// Add the object for deciding whether to turn or not
+        me.pool.register("DecisionPoint", game.DecisionPoint);
 
 		// Add button objects
         me.pool.register("PauseButton", game.PauseButton);
