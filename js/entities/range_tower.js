@@ -36,8 +36,12 @@ game.RangeTower = me.Entity.extend(
 		this.cooldownDuration = 1000; // Milliseconds
 		this.cooldownTimeCount = 0; // Milliseconds
 		
-		// Set attack range variable.
-		this.range = 3.5 * 64; // Range = rangeMultipler * tileSize
+		// Set attack range variables.
+		this.range = 4 * ((TILE_WIDTH + TILE_HEIGHT) / 2); // Range = rangeMultipler * tileSize
+		// centerX and centerY are used to take into account "top lefty-ness" of entity position when
+		// checking if targets are in attack range.
+		this.centerOffsetX = TILE_WIDTH / 2;
+		this.centerOffsetY = TILE_HEIGHT / 2;
 		
         // Set target tracking variables.
 		this.lastTargetAngle = 0;
@@ -78,8 +82,10 @@ game.RangeTower = me.Entity.extend(
 				// Check if the last target attacked by this tower still exists in the game world.
 				if (lastTarget != null) {
 					var lastTargetDistance = Math.sqrt(
-						Math.pow(lastTarget.pos.x - this.pos.x, 2) +
-						Math.pow(lastTarget.pos.y - this.pos.y, 2)
+						Math.pow((lastTarget.pos.x + this.centerOffsetX) -
+							(this.pos.x + this.centerOffsetX), 2) +
+						Math.pow((lastTarget.pos.y + this.centerOffsetY) -
+							(this.pos.y + this.centerOffsetY), 2)
 					);
 					
 					// Check if the last target is within range of this tower.
@@ -95,8 +101,10 @@ game.RangeTower = me.Entity.extend(
 				var i, shortestTargetDistance = this.range + 7;
 				for (i = 0; i < game.data.enemies.length; i++) {
 					var targetDistance = Math.sqrt(
-						Math.pow(game.data.enemies[i].pos.x - this.pos.x, 2) +
-						Math.pow(game.data.enemies[i].pos.y - this.pos.y, 2)
+						Math.pow((game.data.enemies[i].pos.x + this.centerOffsetX) -
+							(this.pos.x + this.centerOffsetX), 2) +
+						Math.pow((game.data.enemies[i].pos.y + this.centerOffsetY) -
+							(this.pos.y + this.centerOffsetY), 2)
 					);
 					
 					// Check if the target is within range and closer to this tower than previously

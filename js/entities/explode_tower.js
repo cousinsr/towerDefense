@@ -37,8 +37,12 @@ game.ExplodeTower = me.Entity.extend(
 		this.cooldownTimeCount = 0; // Milliseconds
 		
 		// Set tower attack range and bomb explosion radius variables.
-		this.range = 6 * 64; // Range = rangeMultipler * tileSize
-		this.explosionRadius = 3 * 64;
+		this.range = 6 * ((TILE_WIDTH + TILE_HEIGHT) / 2); // Range = rangeMultipler * tileSize
+		this.explosionRadius = 3 * ((TILE_WIDTH + TILE_HEIGHT) / 2);
+		// centerX and centerY are used to take into account "top lefty-ness" of entity position when
+		// checking if targets are in attack range.
+		this.centerOffsetX = TILE_WIDTH / 2;
+		this.centerOffsetY = TILE_HEIGHT / 2;
 		
         // Set target tracking variables.
 		this.lastTargetAngle = 0;
@@ -69,8 +73,10 @@ game.ExplodeTower = me.Entity.extend(
 			var i, shortestTargetDistance = this.range + 7;
 			for (i = 0; i < game.data.enemies.length; i++) {
 				var targetDistance = Math.sqrt(
-					Math.pow(game.data.enemies[i].pos.x - this.pos.x, 2) +
-					Math.pow(game.data.enemies[i].pos.y - this.pos.y, 2)
+					Math.pow((game.data.enemies[i].pos.x + this.centerOffsetX) -
+						(this.pos.x + this.centerOffsetX), 2) +
+					Math.pow((game.data.enemies[i].pos.y + this.centerOffsetY) -
+						(this.pos.y + this.centerOffsetY), 2)
 				);
 				
 				// Check if the target is within range and closer to this tower than previously
@@ -206,6 +212,10 @@ game.Bomb = me.Entity.extend({
 		
 		// Set the explosion radius of this bomb.
 		this.explosionRadius = explosionRadius;
+		// centerX and centerY are used to take into account "top lefty-ness" of entity position when
+		// checking if targets are in explosion range.
+		this.centerOffsetX = TILE_WIDTH / 2;
+		this.centerOffsetY = TILE_HEIGHT / 2;
     },
 
     update : function (dt) {
@@ -273,8 +283,10 @@ game.Bomb = me.Entity.extend({
 				// emanate from the point of impact that is where the projectile meets the target.
 				// The projectile position is to the left of that point of impact by TILE_WIDTH.
 				var targetDistance = Math.sqrt(
-					Math.pow(game.data.enemies[i].pos.x - blastSite.pos.x, 2) +
-					Math.pow(game.data.enemies[i].pos.y - blastSite.pos.y, 2)
+					Math.pow((game.data.enemies[i].pos.x + this.centerOffsetX) -
+						(blastSite.pos.x + this.centerOffsetX), 2) +
+					Math.pow((game.data.enemies[i].pos.y + this.centerOffsetY) -
+						(blastSite.pos.y + this.centerOffsetY), 2)
 				);
 				
 				// Check if the target is within the bomb's explosion radius.
