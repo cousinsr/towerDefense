@@ -29,7 +29,11 @@ game.StunTower = me.Entity.extend(
 		this.cooldownTimeCount = 0; // Milliseconds
 		
 		// Set tower attack range.
-		this.range = 3.5 * 64; // Range = rangeMultipler * tileSize
+		this.range = 4 * ((TILE_WIDTH + TILE_HEIGHT) / 2); // Range = rangeMultipler * tileSize
+		// centerX and centerY are used to take into account "top lefty-ness" of entity position when
+		// checking if targets are in attack range.
+		this.centerOffsetX = TILE_WIDTH / 2;
+		this.centerOffsetY = TILE_HEIGHT / 2;
     },
 	
 	update : function (dt) {
@@ -56,8 +60,10 @@ game.StunTower = me.Entity.extend(
 			var i;
 			for (i = 0; i < game.data.enemies.length; i++) {
 				var targetDistance = Math.sqrt(
-					Math.pow(game.data.enemies[i].pos.x - this.pos.x, 2) +
-					Math.pow(game.data.enemies[i].pos.y - this.pos.y, 2)
+					Math.pow((game.data.enemies[i].pos.x + this.centerOffsetX) -
+						(this.pos.x + this.centerOffsetX), 2) +
+					Math.pow((game.data.enemies[i].pos.y + this.centerOffsetY) -
+						(this.pos.y + this.centerOffsetY), 2)
 				);
 				
 				// Check if the target is within range of this tower.
@@ -71,29 +77,32 @@ game.StunTower = me.Entity.extend(
 				// Generate a stun effect on the tower.
 				me.game.world.addChild(
 					me.pool.pull("stunEffect", this.pos.x, this.pos.y,
-					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null, 0, 0)
 				);
 				// Generate stun effects around the tower.
 				// Left of tower.
 				me.game.world.addChild(
-					me.pool.pull("stunEffect", this.pos.x - TILE_WIDTH, this.pos.y,
-					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
+					me.pool.pull("stunEffect", this.pos.x, this.pos.y,
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null, -1 * TILE_WIDTH, 0)
 				);
 				// Right of tower.
 				me.game.world.addChild(
-					me.pool.pull("stunEffect", this.pos.x + TILE_WIDTH, this.pos.y,
-					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
+					me.pool.pull("stunEffect", this.pos.x, this.pos.y,
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null, TILE_WIDTH, 0)
 				);
 				// Above the tower.
 				me.game.world.addChild(
-					me.pool.pull("stunEffect", this.pos.x, this.pos.y - TILE_HEIGHT,
-					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
+					me.pool.pull("stunEffect", this.pos.x, this.pos.y,
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null, 0, -1 * TILE_HEIGHT)
 				);
 				// Below the tower.
 				me.game.world.addChild(
-					me.pool.pull("stunEffect", this.pos.x, this.pos.y + TILE_HEIGHT,
-					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
+					me.pool.pull("stunEffect", this.pos.x, this.pos.y,
+					{width: TILE_WIDTH, height: TILE_HEIGHT}, null, 0, TILE_HEIGHT)
 				);
+				
+				// Generate a stun attack sound.
+				me.audio.play("qubodup-PowerDrain");
 				
 				// Reduce the speed of each target within range, and flicker each impacted target.
 				var j;
@@ -112,7 +121,28 @@ game.StunTower = me.Entity.extend(
 					// Generate a stun effect on the target.
 					me.game.world.addChild(
 						me.pool.pull("stunEffect", singleTarget.pos.x, singleTarget.pos.y,
-						{width: TILE_WIDTH, height: TILE_HEIGHT}, singleTarget.GUID)
+						{width: TILE_WIDTH, height: TILE_HEIGHT}, singleTarget.GUID, 0, 0)
+					);
+					// Generate stun effects around the target.
+					// Left of target.
+					me.game.world.addChild(
+						me.pool.pull("stunEffect", singleTarget.pos.x, singleTarget.pos.y,
+						{width: TILE_WIDTH, height: TILE_HEIGHT}, singleTarget.GUID, -1 * TILE_WIDTH, 0)
+					);
+					// Right of target.
+					me.game.world.addChild(
+						me.pool.pull("stunEffect", singleTarget.pos.x, singleTarget.pos.y,
+						{width: TILE_WIDTH, height: TILE_HEIGHT}, singleTarget.GUID, TILE_WIDTH, 0)
+					);
+					// Above the target.
+					me.game.world.addChild(
+						me.pool.pull("stunEffect", singleTarget.pos.x, singleTarget.pos.y,
+						{width: TILE_WIDTH, height: TILE_HEIGHT}, singleTarget.GUID, 0, -1 * TILE_HEIGHT)
+					);
+					// Below the target.
+					me.game.world.addChild(
+						me.pool.pull("stunEffect", singleTarget.pos.x, singleTarget.pos.y,
+						{width: TILE_WIDTH, height: TILE_HEIGHT}, singleTarget.GUID, 0, TILE_HEIGHT)
 					);
 				}
 				
@@ -134,7 +164,7 @@ game.StunTower = me.Entity.extend(
 
 game.StunEffect = me.Entity.extend(
 {
-    init: function (x, y, settings, targetGUID)
+    init: function (x, y, settings, targetGUID, xOffset, yOffset)
     { 
         // Update settings:
         //  - tower image
@@ -146,8 +176,12 @@ game.StunEffect = me.Entity.extend(
         settings.framewidth = settings.width = TILE_WIDTH;
         settings.frameheight = settings.height = TILE_HEIGHT;
 
+		// Set the positional offset of this effect from its target.
+		this.xOffset = xOffset;
+		this.yOffset = yOffset;
+
         // Call the parent constructor.
-        this._super(me.Entity, 'init', [x, y, settings]);
+        this._super(me.Entity, 'init', [x + xOffset, y + yOffset, settings]);
 
 		// Set animations.
         this.renderable.addAnimation("stunCloud", [22]);
@@ -188,8 +222,8 @@ game.StunEffect = me.Entity.extend(
 
 			if (target != null) {
 				// Match this effect's position to the target's position.
-				this.pos.x = target.pos.x;
-				this.pos.y = target.pos.y;
+				this.pos.x = target.pos.x + this.xOffset;
+				this.pos.y = target.pos.y + this.yOffset;
 			// The target no longer exists, so remove this effect from the play screen.
 			} else {
 				me.game.world.removeChild(this);

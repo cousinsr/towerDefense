@@ -22,6 +22,9 @@ game.GameOverScreen = me.Stage.extend({
 		me.game.viewport.height / gameOverImage.height);
 	me.game.world.addChild(gameOverImage, screenNum);
 
+	// Play a looping music track.
+	me.audio.playTrack("Iwan Gabovitch - Dark Ambience Loop");
+
 	// Bind necessary keys to navigate screens
     me.input.bindKey(me.input.KEY.SPACE, "space", true);
 	me.input.bindKey(me.input.KEY.BACKSPACE, "backspace", true);
@@ -55,7 +58,9 @@ game.GameOverScreen = me.Stage.extend({
 		// Return to the game title screen after finishing the game over screens.
         else if ((action === "space" && game.data.level == 0) ||
 			(action === "enter" && screenNum == lastScreen)) {
-            
+            // Stop the music.
+			me.audio.stopTrack();
+			
 			game.data.life = START_LIFE;
 			game.data.wave = 0;
 			game.data.gold = START_GOLD;
@@ -64,7 +69,10 @@ game.GameOverScreen = me.Stage.extend({
         }
 		// Return to the play screen at the level after level01 where the player lost, if they want.
         else if (action === "backspace" && game.data.level > 0) {
-            game.data.life = game.data.lastStartingLife;
+            // Stop the music.
+			me.audio.stopTrack();
+			
+			game.data.life = game.data.lastStartingLife;
 			game.data.wave = 0;
 			game.data.gold = game.data.lastStartingGold;
 			me.state.change(me.state.PLAY);

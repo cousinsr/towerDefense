@@ -22,6 +22,9 @@ game.GameEndScreen = me.Stage.extend({
 		me.game.viewport.height / gameEndImage.height);
 	me.game.world.addChild(gameEndImage, screenNum);
 
+	// Play a looping music track.
+	me.audio.playTrack("tgfcoder-FrozenJam-SeamlessLoop");
+
 	// Bind necessary keys to navigate screens
     me.input.bindKey(me.input.KEY.SPACE, "space", true);
 
@@ -42,6 +45,9 @@ game.GameEndScreen = me.Stage.extend({
         }
 		// Return to the game title screen after finishing the game end screens.
         else if (action === "space") {
+			// Stop the music.
+			me.audio.stopTrack();
+			
 			game.data.life = START_LIFE;
 			game.data.wave = 0;
 			game.data.gold = START_GOLD;

@@ -31,6 +31,10 @@ game.PauseButton = me.GUI_Object.extend({
 			me.game.world.addChild(this.menuButtons[0]);
 			me.game.world.addChild(this.menuButtons[1]);
 			me.game.world.addChild(this.menuButtons[2]);
+			
+			// Mute all game sounds.
+			me.audio.muteAll();
+			
 			game.data.isPaused = true;
 		}
 		else {
@@ -39,6 +43,9 @@ game.PauseButton = me.GUI_Object.extend({
 			me.game.world.removeChild(this.menuButtons[1]);
 			me.game.world.removeChild(this.menuButtons[0]);
 			this.menuButtons = [];
+			
+			// Unmute all game sounds.
+			me.audio.unmuteAll();
 		}
         return false;
     }
@@ -70,6 +77,10 @@ game.ResumeButton = me.GUI_Object.extend({
 		me.game.world.removeChild(this.menu[1]);
 		me.game.world.removeChild(this.menu[2]);
 		game.data.isPaused = false;
+		
+		// Unmute all game sounds.
+		me.audio.unmuteAll();
+		
 		return false;
 	}
 });
@@ -98,6 +109,10 @@ game.RestartButton = me.GUI_Object.extend({
 		// Code to return to level introduction screen
 		game.data.isPaused = false;
 		this.pause.menuButtons = [];
+		
+		// Unmute all game sounds.
+		me.audio.unmuteAll();
+		
 		me.state.change(RESTART);
 		return false;
 	}
@@ -129,6 +144,10 @@ game.QuitButton = me.GUI_Object.extend({
 		game.data.wave = 0;
 		game.data.gold = START_GOLD;
 		game.data.level = 0;
+		
+		// Unmute all game sounds.
+		me.audio.unmuteAll();
+		
 		me.state.change(me.state.MENU);
 		return false;
 	}
