@@ -103,6 +103,9 @@ game.ExplodeTower = me.Entity.extend(
 					{width: TILE_WIDTH, height: TILE_HEIGHT})
 				);
 				
+				// Generate a bomb launch sound.
+				me.audio.play("rlauncher");
+				
 				// Launch a projectile at the target's current position marker.
 				me.game.world.addChild(
 					me.pool.pull("bomb", this.pos.x, this.pos.y,
@@ -249,6 +252,9 @@ game.Bomb = me.Entity.extend({
         if (response.b.GUID == this.positionMarkerTarget.GUID) {
 			// Remove the projectile from the map.
 			me.game.world.removeChild(response.a);
+			
+			// Generate an explosion sound.
+			me.audio.play("explode");
 			
 			// Spawn a static temporary decal effect.
 			var blastSite = me.game.world.addChild(

@@ -124,6 +124,9 @@ game.RangeTower = me.Entity.extend(
 				// Record the latest target angle used to rotate the tower.
 				this.lastTargetAngle = targetAngle;
 				
+				// Generate a bomb launch sound.
+				me.audio.play("glauncher");
+				
 				// Launch a projectile at the current target.
 				me.game.world.addChild(
 					me.pool.pull("missile", this.pos.x, this.pos.y,
@@ -267,15 +270,21 @@ game.Missile = me.Entity.extend({
 		(this.freeAgent && response.b.name == "enemy")) {
 			// Remove the projectile from the map.
 			me.game.world.removeChild(response.a);
+			
+			// Generate an enemy hit sound.
+			me.audio.play("qubodupImpactMetal");
+			
 			// Lower the health of the target.
 			if (this.hit != response.b) {
 				this.hit = response.b;
 				response.b.health -= this.damage;
 			}
+			
 			// Have the target flicker if it took damage but is still alive following this collision.
 			if (response.b.health > 0) {
 				response.b.renderable.flicker(500);
 			}
+			
 			// Check if a static position marker needs to be removed.
 			if (this.freeAgent) {
 				me.game.world.removeChild(this.positionMarkerTarget);
@@ -286,6 +295,8 @@ game.Missile = me.Entity.extend({
         } else if (this.freeAgent && response.b.GUID == this.targetGUID) {
 			// Remove the projectile from the map.
 			me.game.world.removeChild(response.a);
+			// Generate a ground hit sound.
+			me.audio.play("qubodupImpactStone");
 			// Spawn a static temporary decal effect.
 			me.game.world.addChild(
 				me.pool.pull("groundDecal", response.b.pos.x, response.b.pos.y,

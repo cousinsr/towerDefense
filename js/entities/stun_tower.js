@@ -95,6 +95,9 @@ game.StunTower = me.Entity.extend(
 					{width: TILE_WIDTH, height: TILE_HEIGHT}, null)
 				);
 				
+				// Generate a stun attack sound.
+				me.audio.play("qubodup-PowerDrain");
+				
 				// Reduce the speed of each target within range, and flicker each impacted target.
 				var j;
 				for (j = 0; j < targetsInRangeGUIDs.length; j++) {
