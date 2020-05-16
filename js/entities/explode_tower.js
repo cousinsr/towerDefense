@@ -281,7 +281,6 @@ game.Bomb = me.Entity.extend({
 				// The targetDistance calculation uses the coordinates of the target hit (blastSite)
 				// instead of the projectile (response.a, or "this") because the explosion is intended
 				// emanate from the point of impact that is where the projectile meets the target.
-				// The projectile position is to the left of that point of impact by TILE_WIDTH.
 				var targetDistance = Math.sqrt(
 					Math.pow((game.data.enemies[i].pos.x + this.centerOffsetX) -
 						(blastSite.pos.x + this.centerOffsetX), 2) +
@@ -296,10 +295,41 @@ game.Bomb = me.Entity.extend({
 					// Have the target flicker if it is still alive, and apply an effect to the target.
 					if (game.data.enemies[i].health > 0) {
 						game.data.enemies[i].renderable.flicker(1000);
+						// Generate an effect on the target.
 						me.game.world.addChild(
 								me.pool.pull("explosionEffect",
 								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, game.data.enemies[i].GUID, 1000)
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, game.data.enemies[i].GUID,
+								0, 0, 1000)
+						);
+						// Generate effects around the target.
+						// Left of target.
+						me.game.world.addChild(
+								me.pool.pull("explosionEffect",
+								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, game.data.enemies[i].GUID,
+								-1 * TILE_WIDTH / 2, 0, 1000)
+						);
+						// Right of target.
+						me.game.world.addChild(
+								me.pool.pull("explosionEffect",
+								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, game.data.enemies[i].GUID,
+								TILE_WIDTH / 2, 0, 1000)
+						);
+						// Above the target.
+						me.game.world.addChild(
+								me.pool.pull("explosionEffect",
+								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, game.data.enemies[i].GUID,
+								0, -1 * TILE_HEIGHT / 2, 1000)
+						);
+						// Below the target.
+						me.game.world.addChild(
+								me.pool.pull("explosionEffect",
+								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, game.data.enemies[i].GUID,
+								0, TILE_HEIGHT / 2, 1000)
 						);
 					// The target died, so place an effect at its current position.
 					} else {
@@ -308,10 +338,40 @@ game.Bomb = me.Entity.extend({
 						var effectLifetime = 1000 *
 							(this.explosionRadius - targetDistance) / this.explosionRadius;
 						
+						// Generate an effect on the target.
 						me.game.world.addChild(
 								me.pool.pull("explosionEffect",
 								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, null, effectLifetime)
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, null, 0, 0, effectLifetime)
+						);
+						// Generate effects around the target.
+						// Left of target.
+						me.game.world.addChild(
+								me.pool.pull("explosionEffect",
+								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, null,
+								-1 * TILE_WIDTH / 2, 0, effectLifetime)
+						);
+						// Right of target.
+						me.game.world.addChild(
+								me.pool.pull("explosionEffect",
+								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, null,
+								TILE_WIDTH / 2, 0, effectLifetime)
+						);
+						// Above the target.
+						me.game.world.addChild(
+								me.pool.pull("explosionEffect",
+								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, null,
+								0, -1 * TILE_HEIGHT / 2, effectLifetime)
+						);
+						// Below the target.
+						me.game.world.addChild(
+								me.pool.pull("explosionEffect",
+								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, null,
+								0, TILE_HEIGHT / 2, effectLifetime)
 						);
 					}
 				}
@@ -327,7 +387,7 @@ game.Bomb = me.Entity.extend({
 
 game.ExplosionEffect = me.Entity.extend(
 {
-    init: function (x, y, settings, targetGUID, lifetime)
+    init: function (x, y, settings, targetGUID, xOffset, yOffset, lifetime)
     { 
         // Update settings:
         //  - tower image
@@ -339,8 +399,12 @@ game.ExplosionEffect = me.Entity.extend(
         settings.framewidth = settings.width = TILE_WIDTH;
         settings.frameheight = settings.height = TILE_HEIGHT;
 
+		// Set the positional offset of this effect from its target.
+		this.xOffset = xOffset;
+		this.yOffset = yOffset;
+
         // Call the parent constructor.
-        this._super(me.Entity, 'init', [x, y, settings]);
+        this._super(me.Entity, 'init', [x + xOffset, y + yOffset, settings]);
 
 		// Set animations.
         this.renderable.addAnimation("explodeEffect", [298]);
@@ -381,8 +445,8 @@ game.ExplosionEffect = me.Entity.extend(
 			
 			if (target != null) {
 				// Match this effect's position to the target's position.
-				this.pos.x = target.pos.x;
-				this.pos.y = target.pos.y;
+				this.pos.x = target.pos.x + this.xOffset;
+				this.pos.y = target.pos.y + this.yOffset;
 			// The target no longer exists, so remove this effect from the play screen.
 			} else {
 				me.game.world.removeChild(this);
