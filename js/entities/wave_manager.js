@@ -66,6 +66,8 @@ game.WaveManager = me.Entity.extend({
 				var spawnChoice = Math.floor(Math.random() * numSpawnChoices);
 				if (spawnChoice >= numSpawnChoices) {
 					spawnChoice = numSpawnChoices - 1;
+				} else if (game.data.level < 4 && this.wave < 8) {
+					spawnChoice = 1;
 				}
 				// Add the chosen enemy on one of three paths from the chosen spawn point
 				var randomNum = Math.floor(Math.random() * 3);
