@@ -194,6 +194,7 @@ game.Skeleton = me.Entity.extend(
         if (response.b.name == "Finish" && game.data.enemies.includes(this)) {
 			game.data.enemies.splice(game.data.enemies.indexOf(this), 1);
             game.data.life -= 1;
+            me.audio.play("screamandchoke");
             me.game.world.removeChild(this);
             return false;
         }

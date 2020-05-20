@@ -66,6 +66,7 @@ game.TowerMenuItem = me.GUI_Object.extend(
                     // Update global game variables.
                     game.data.gold += TOWER_SELL_RATE * tower.currentTower.towerCost;
                     game.data.sellTower = false;
+                    me.audio.play("CashRegister");
 
                     // Remove tower.
                     tower.selected = false;
@@ -78,6 +79,7 @@ game.TowerMenuItem = me.GUI_Object.extend(
                     tower.selected = false;
                     tower.locked = true;
                     me.game.world.removeChild(tower.currentTower);
+                    me.audio.play("Plop");
 
                     if (this.towerType == TOWER_MENU_RANGE)
                         tower.currentTower = me.game.world.addChild(

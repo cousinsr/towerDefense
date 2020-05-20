@@ -30,6 +30,7 @@ game.WaveManager = me.Entity.extend({
 		this.timeBeforeNextEnemy = level_comp[idx].timeGaps[idx] * 1000;
 		this.startOfWave = true;
 		this.waitingForNextLevel = false;
+		this.resetAudio = true;
 		this.levelCompleteCountdown = 3000;
 		// Reset the global variables
 		game.data.wave = 0;
@@ -38,6 +39,7 @@ game.WaveManager = me.Entity.extend({
     },
 	
     update : function (dt) {
+ 
 		if (game.data.isPaused) {
 			return true;
 		}
@@ -45,6 +47,11 @@ game.WaveManager = me.Entity.extend({
 		if (!this.waitingForNextLevel) {
 			// Update timer
 			this.timeBeforeNextEnemy -= dt;
+			// Play audio if wave will start in the next 3 seconds and hasn't already been played.
+			if (this.timeBeforeNextEnemy <= 3000 && this.resetAudio) {
+				me.audio.play("creaky_door_4");
+				this.resetAudio = false;
+			}
 			// Add an enemy if the timer has reached 0
 			if (this.timeBeforeNextEnemy <= 0) {
 				// Update the wave count
@@ -66,8 +73,8 @@ game.WaveManager = me.Entity.extend({
 				var spawnChoice = Math.floor(Math.random() * numSpawnChoices);
 				if (spawnChoice >= numSpawnChoices) {
 					spawnChoice = numSpawnChoices - 1;
-				} else if (game.data.level < 4 && this.wave < 8) {
-					spawnChoice = 1;
+				} else if (game.data.level == 1 && this.wave < 9) {
+					spawnChoice = 1;			// only spawn second path for waves 9 and 10
 				}
 				// Add the chosen enemy on one of three paths from the chosen spawn point
 				var randomNum = Math.floor(Math.random() * 3);
@@ -88,6 +95,7 @@ game.WaveManager = me.Entity.extend({
 				this.enemiesRemaining = this.counts[this.wave];
 				this.wave += 1;
 				this.startOfWave = true;
+				this.resetAudio = true;
 			}
 			// Remove the wave manager from the game if all enemies have been added
 			if (this.enemiesRemaining <= 0 && this.wave >= this.numWaves) {
