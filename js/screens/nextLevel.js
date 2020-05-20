@@ -12,6 +12,9 @@ game.NextLevelScreen = me.Stage.extend(
         // Add level bonus
         game.data.gold += GOLD_LEVEL_REWARD;
 
+        // Play audio
+        me.audio.play("transition");
+
         // Set and scale the image for the initial screen
         var nextLevelImage = new me.Sprite(0, 0, {
             image: me.loader.getImage("nextLevel"),
