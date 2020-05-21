@@ -25,6 +25,9 @@ game.HUD.Container = me.Container.extend({
 
         // Add the gold indicator to the HUD.
         this.addChild(new game.HUD.GoldItem(-10, -10));
+
+        // Add the level indicator to the HUD.
+        this.addChild(new game.HUD.LevelItem(-10, -10));
     }
 });
 
@@ -157,5 +160,50 @@ game.HUD.GoldItem = me.Renderable.extend(
         this.font.draw (renderer, "Gold: " + game.data.gold,
             me.game.viewport.width - TILE_WIDTH,
             me.game.viewport.height - TILE_HEIGHT * 3);
+    }
+});
+
+/********************************************************************
+ * HUD item to display level.
+  ********************************************************************/
+
+game.HUD.LevelItem = me.Renderable.extend(
+{
+    init: function(x, y)
+    {
+        this._super(me.Renderable, 'init', [x, y, 10, 10]);
+
+        // Set the font for this information
+        this.font = new me.BitmapText(x, y, {font:"PressStart2P"});
+
+        // Align the font to the right and bottom of the screen
+        this.font.textAlign = "right";
+        this.font.textBaseline = "bottom";
+
+        // Set the font color to red (not currently working)
+        // this.tint = new me.Color(255, 0, 0);
+
+        // Local copy of the global level
+        this.level = -1;
+    },
+
+    update : function ()
+    {
+        // Keep the local data for level up to date
+        if (this.level != game.data.level + 1)
+        {
+            this.level = game.data.level + 1;
+            return true;
+        }
+        return false;
+    },
+
+    draw : function (renderer)
+    {
+        // Place it four tiles from the bottom right
+        var level = game.data.level + 1; 
+        this.font.draw (renderer, "Level: " + level,
+            me.game.viewport.width - TILE_WIDTH,
+            me.game.viewport.height - TILE_HEIGHT * 19);
     }
 });
