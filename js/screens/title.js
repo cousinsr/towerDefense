@@ -17,6 +17,9 @@ game.TitleScreen = me.Stage.extend({
     titleImage.scale(me.game.viewport.width / titleImage.width, me.game.viewport.height / titleImage.height);
 	me.game.world.addChild(titleImage, 1);
 
+	// Play a music track
+    me.audio.play("Soliloquy", true);
+
     // Bind necessary keys and left click
     me.input.bindKey(me.input.KEY.ENTER, "enter", true);
     me.input.bindPointer(me.input.pointer.LEFT, me.input.KEY.ENTER);
@@ -38,5 +41,6 @@ game.TitleScreen = me.Stage.extend({
     me.input.unbindKey(me.input.KEY.SPACE);
     me.input.unbindPointer(me.input.pointer.LEFT);
     me.event.unsubscribe(this.handler);
+	me.audio.stop("Soliloquy")
   }
 });

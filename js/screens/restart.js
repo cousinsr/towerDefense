@@ -21,6 +21,7 @@ game.RestartScreen = me.Stage.extend({
 
 	// Bind necessary keys to navigate screens
     me.input.bindKey(me.input.KEY.SPACE, "space", true);
+    me.audio.play("Chimes", false);
 
 	// Respond to keystrokes
     this.handler = me.event.subscribe(me.event.KEYDOWN, function (action, keyCode, edge) {

@@ -28,7 +28,7 @@ game.PauseButton = me.GUI_Object.extend({
 			this.menuButtons.push(new game.ResumeButton(TILE_WIDTH * 4, TILE_HEIGHT, {}, this));
 			this.menuButtons.push(new game.RestartButton(TILE_WIDTH * 8.5, TILE_HEIGHT, {}, this));
 			this.menuButtons.push(new game.QuitButton(TILE_WIDTH * 13, TILE_HEIGHT, {}, this));
-			this.menuButtons.push(new game.MuteButton(TILE_WIDTH * 4, TILE_HEIGHT * 3.5, {}, this));
+			this.menuButtons.push(new game.MuteButton(TILE_WIDTH * 17.5, TILE_HEIGHT, {}, this));
 			me.game.world.addChild(this.menuButtons[0]);
 			me.game.world.addChild(this.menuButtons[1]);
 			me.game.world.addChild(this.menuButtons[2]);
