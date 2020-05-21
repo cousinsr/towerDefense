@@ -25,6 +25,8 @@ var game = {
         lastStartingGold: START_GOLD,
 		// Pause tracker
 		isPaused: false,
+		// Mute audio tracker
+		isMuted: false,
         // Enemy arrays
         enemies: [],
         dyingEnemies: []
