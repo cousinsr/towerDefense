@@ -28,9 +28,11 @@ game.PauseButton = me.GUI_Object.extend({
 			this.menuButtons.push(new game.ResumeButton(TILE_WIDTH * 4, TILE_HEIGHT, {}, this));
 			this.menuButtons.push(new game.RestartButton(TILE_WIDTH * 8.5, TILE_HEIGHT, {}, this));
 			this.menuButtons.push(new game.QuitButton(TILE_WIDTH * 13, TILE_HEIGHT, {}, this));
+			this.menuButtons.push(new game.MuteButton(TILE_WIDTH * 4, TILE_HEIGHT * 3.5, {}, this));
 			me.game.world.addChild(this.menuButtons[0]);
 			me.game.world.addChild(this.menuButtons[1]);
 			me.game.world.addChild(this.menuButtons[2]);
+			me.game.world.addChild(this.menuButtons[3]);
 			
 			// Mute all game sounds.
 			me.audio.muteAll();
@@ -39,13 +41,17 @@ game.PauseButton = me.GUI_Object.extend({
 		}
 		else {
 			game.data.isPaused = false;
+			me.game.world.removeChild(this.menuButtons[3]);
 			me.game.world.removeChild(this.menuButtons[2]);
 			me.game.world.removeChild(this.menuButtons[1]);
 			me.game.world.removeChild(this.menuButtons[0]);
 			this.menuButtons = [];
 			
-			// Unmute all game sounds.
-			me.audio.unmuteAll();
+			// Unmute game audio upon pause menu exit if desired by the user.
+			if (!game.data.isMuted) {
+				// Unmute all game sounds.
+				me.audio.unmuteAll();
+			}
 		}
         return false;
     }
@@ -61,6 +67,7 @@ game.ResumeButton = me.GUI_Object.extend({
 		this.pause = pause;
 		this.menu = pause.menuButtons;
     },
+	
 	onOver: function (event) {
 		this.setOpacity(1.0);
 		return false;
@@ -70,16 +77,21 @@ game.ResumeButton = me.GUI_Object.extend({
 		this.setOpacity(0.9);
         return false;
 	},
+	
 	onClick: function (event)
 	{
 		this.pause.menuButtons = [];
 		me.game.world.removeChild(this.menu[0]);
 		me.game.world.removeChild(this.menu[1]);
 		me.game.world.removeChild(this.menu[2]);
+		me.game.world.removeChild(this.menu[3]);
 		game.data.isPaused = false;
 		
-		// Unmute all game sounds.
-		me.audio.unmuteAll();
+		// Unmute game audio upon pause menu exit if desired by the user.
+		if (!game.data.isMuted) {
+			// Unmute all game sounds.
+			me.audio.unmuteAll();
+		}
 		
 		return false;
 	}
@@ -95,6 +107,7 @@ game.RestartButton = me.GUI_Object.extend({
 		this.pause = pause;
 		this.menu = pause.menuButtons;
     },
+	
 	onOver: function (event) {
 		this.setOpacity(1.0);
 		return false;
@@ -104,14 +117,18 @@ game.RestartButton = me.GUI_Object.extend({
 		this.setOpacity(0.9);
         return false;
 	},
+	
 	onClick: function (event)
 	{
 		// Code to return to level introduction screen
 		game.data.isPaused = false;
 		this.pause.menuButtons = [];
 		
-		// Unmute all game sounds.
-		me.audio.unmuteAll();
+		// Unmute game audio upon pause menu exit if desired by the user.
+		if (!game.data.isMuted) {
+			// Unmute all game sounds.
+			me.audio.unmuteAll();
+		}
 		
 		me.state.change(RESTART);
 		return false;
@@ -127,6 +144,7 @@ game.QuitButton = me.GUI_Object.extend({
 		this.setOpacity(0.9);
 		this.pause = pause;
     },
+	
 	onOver: function (event) {
 		this.setOpacity(1.0);
 		return false;
@@ -136,6 +154,7 @@ game.QuitButton = me.GUI_Object.extend({
 		this.setOpacity(0.9);
         return false;
 	},
+	
 	onClick: function (event)
 	{
 		game.data.isPaused = false;
@@ -145,10 +164,59 @@ game.QuitButton = me.GUI_Object.extend({
 		game.data.gold = START_GOLD;
 		game.data.level = 0;
 		
-		// Unmute all game sounds.
-		me.audio.unmuteAll();
+		// Unmute game audio upon pause menu exit if desired by the user.
+		if (!game.data.isMuted) {
+			// Unmute all game sounds.
+			me.audio.unmuteAll();
+		}
 		
 		me.state.change(me.state.MENU);
+		return false;
+	}
+});
+
+game.MuteButton = me.GUI_Object.extend({
+    init: function (x, y, settings, pause) {
+        settings.image = "muteUnmuteAudio";
+        settings.framewidth = settings.width = TILE_WIDTH * 4;
+        settings.frameheight = settings.height = TILE_HEIGHT * 2;
+        this._super(me.GUI_Object, 'init', [x, y , settings]);
+		
+		// Set available button appearances.
+		this.addAnimation("unmute", [0]);
+		this.addAnimation("mute", [1]);
+		// Set initial appearance of button in pause menu depending on value of game.data.isMuted .
+		if (game.data.isMuted) {
+			this.setCurrentAnimation("unmute");
+		} else {
+			this.setCurrentAnimation("mute");
+		}
+		
+		this.setOpacity(0.9);
+		this.pause = pause;
+    },
+	
+	onOver: function (event) {
+		this.setOpacity(1.0);
+		return false;
+	},
+
+	onOut: function (event) {
+		this.setOpacity(0.9);
+        return false;
+	},
+	
+	onClick: function (event)
+	{
+		game.data.isMuted = !game.data.isMuted;
+		
+		// Update the button depending on value of game.data.isMuted .
+		if (game.data.isMuted) {
+			this.setCurrentAnimation("unmute");
+		} else {
+			this.setCurrentAnimation("mute");
+		}
+		
 		return false;
 	}
 });
