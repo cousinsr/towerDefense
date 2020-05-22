@@ -30,5 +30,5 @@ var GOLD_LEVEL_REWARD = 50;
 var START_LIFE = 10;
 
 // User states:
-var RESTART = me.state.USER + 0;
-
+var INTRO = me.state.USER + 0;
+var RESTART = me.state.USER + 1;

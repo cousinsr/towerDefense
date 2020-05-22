@@ -50,6 +50,7 @@ var game = {
 
     // Run on game resources loaded.
     "loaded" : function () {
+		me.state.set(INTRO, new game.IntroScreen());
         me.state.set(me.state.MENU, new game.TitleScreen());
         me.state.set(me.state.SETTINGS, new game.InstructionScreen());
         me.state.set(me.state.PLAY, new game.PlayScreen());
@@ -67,6 +68,7 @@ var game = {
 
         // Add the entity that manages waves within a level
         me.pool.register("waveManager", game.WaveManager);
+        me.pool.register("enemyGenerator", game.EnemyGenerator);
 
         // Add the turn collision objects to the entity pool
         me.pool.register("DownTurn", game.DownTurn);
@@ -103,13 +105,14 @@ var game = {
 
 		// Add button objects
         me.pool.register("PauseButton", game.PauseButton);
+        me.pool.register("IntroButton", game.IntroButton);
 		
         // Enable the keyboard for the tower attack target POC.
         me.input.bindKey(me.input.KEY.SPACE,  "shoot", true);
         me.input.unbindKey(me.input.KEY.SPACE);
 
-        // Start the title menu
-        me.state.change(me.state.MENU);
+        // Start the intro screen
+        me.state.change(INTRO);
     }
 };
 
