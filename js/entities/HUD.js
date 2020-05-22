@@ -202,8 +202,8 @@ game.HUD.LevelItem = me.Renderable.extend(
     {
         // Place it four tiles from the bottom right
         var level = game.data.level + 1; 
-        this.font.draw (renderer, "Level: " + level,
-            me.game.viewport.width - TILE_WIDTH,
-            me.game.viewport.height - TILE_HEIGHT * 19);
+        this.font.draw (renderer, "Level " + level + " of 4",
+            me.game.viewport.width - 15,
+            me.game.viewport.height - TILE_HEIGHT * 18);
     }
 });

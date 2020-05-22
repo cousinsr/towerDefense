@@ -15,19 +15,19 @@ game.PlayScreen = me.Stage.extend({
         me.game.world.addChild(this.waveManager);
 
         // Add static tower menu buttons
-        this.towerMenuRange = new game.TowerMenuItem(23*TILE_WIDTH, 2.5*TILE_HEIGHT,
+        this.towerMenuRange = new game.TowerMenuItem(23*TILE_WIDTH+10, 4.5*TILE_HEIGHT,
             TOWER_MENU_RANGE, TOWER_COST_RANGE);
         me.game.world.addChild(this.towerMenuRange);
 
-        this.towerMenuStun = new game.TowerMenuItem(23*TILE_WIDTH, 4.5*TILE_HEIGHT,
+        this.towerMenuStun = new game.TowerMenuItem(23*TILE_WIDTH+10, 6.5*TILE_HEIGHT,
             TOWER_MENU_STUN, TOWER_COST_STUN);
         me.game.world.addChild(this.towerMenuStun);
 
-        this.towerMenuExplode = new game.TowerMenuItem(23*TILE_WIDTH, 6.5*TILE_HEIGHT,
+        this.towerMenuExplode = new game.TowerMenuItem(23*TILE_WIDTH+10, 8.5*TILE_HEIGHT,
             TOWER_MENU_EXPLODE, TOWER_COST_EXPLODE)
         me.game.world.addChild(this.towerMenuExplode);
 
-        this.towerMenuSell = new game.TowerMenuItem(23*TILE_WIDTH, 8.5*TILE_HEIGHT,
+        this.towerMenuSell = new game.TowerMenuItem(23*TILE_WIDTH+10, 10.5*TILE_HEIGHT,
             TOWER_MENU_SELL, 0)
         me.game.world.addChild(this.towerMenuSell);
 
