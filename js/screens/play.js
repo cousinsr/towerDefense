@@ -32,20 +32,20 @@ game.PlayScreen = me.Stage.extend({
 
 		// Set composition of each wave for Level 02
 		else if (game.data.level == 1) {
-			w1 = ["clothedSkeleton"];
-			w2 = ["clothedSkeleton", "clothedSkeleton", "robedSkeleton"];
-			w3 = ["clothedSkeleton", "robedSkeleton", "robedSkeleton"];
+			w1 = ["clothedSkeleton", "robedSkeleton", "armoredSkeleton"];
+			w2 = ["clothedSkeleton", "robedSkeleton", "armoredSkeleton"];
+			w3 = ["clothedSkeleton", "robedSkeleton", "armoredSkeleton"];
 			w4 = ["clothedSkeleton", "robedSkeleton", "armoredSkeleton"];
-			w5 = ["clothedSkeleton", "clothedSkeleton", "armoredSkeleton"];
+			w5 = ["clothedSkeleton", "robedSkeleton", "armoredSkeleton"];
 			w6 = ["robedSkeleton", "armoredSkeleton"];
 			w7 = ["robedSkeleton", "armoredSkeleton"];
-			w8 = ["clothedSkeleton", "robedSkeleton", "armoredSkeleton"];
-			w9 = ["clothedSkeleton", "robedSkeleton", "armoredSkeleton"];
-			w10 = ["clothedSkeleton", "robedSkeleton", "armoredSkeleton"];
+			w8 = ["robedSkeleton", "armoredSkeleton"];
+			w9 = ["robedSkeleton", "armoredSkeleton"];
+			w10 = ["robedSkeleton", "robedSkeleton", "armoredSkeleton"];
 			var enemies02 = [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10];
 			level.enemies = enemies02;
-			level.counts = [2, 2, 3, 3, 4, 4, 5, 5, 6, 8];
-			level.timeGaps = [3, 10, 12, 12, 15, 15, 18, 18, 21, 25];
+			level.counts = [10, 12, 14, 16, 18, 20, 22, 24, 26, 30];
+			level.timeGaps = [3, 5, 7, 9, 11, 2, 2, 2, 2, 2];
 		}
 
 		// Set composition of each wave for Level 03
