@@ -7,7 +7,7 @@
  ********************************************************************/
 game.GameOverScreen = me.Stage.extend({
 
-  onResetEvent : function (imageName) {
+  onResetEvent : function () {
 	// Set necessary variables to track which screen is being shown
 	var screenNum = 1;
 	var lastScreen = 2;

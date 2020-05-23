@@ -1,6 +1,6 @@
 /********************************************************************
  * Citations screens for crediting authors of externally produced
- * sound and art assets.
+ * sound and art assets
  *
  * CITATION: This code is heavily altered but still based on the
  * MelonJS tutorial at http://melonjs.github.io/tutorial-platformer/
@@ -8,7 +8,7 @@
  ********************************************************************/
 game.CitationsScreen = me.Stage.extend({
 
-  onResetEvent : function (imageName) {
+  onResetEvent : function () {
 	// Set necessary variables to track which screen is being shown
 	var screenNum = 1;
 	var rewinds = 0;

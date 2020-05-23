@@ -6,15 +6,17 @@ necessary modifications added for correct functionality in this game.
 https://www.html5gamedevs.com/topic/34225-shooting-projectiles-in-a-specific-direction/
 */
 
+
+/*
+Class for a basic range attack tower entity
+
+Parameters:
+---x and y coordinates for the location of the tower on the map.
+*/
 game.RangeTower = me.Entity.extend(
 {
     init: function (x, y, settings)
     {
-        // Update settings:
-        //  - tower image
-        //  - client (tile) height/width
-        // NOTE - the current image in /data/img/towers is a placeholder
-        // and will need to be replaced.
         settings.image = "towerDefense";
         settings.framewidth = TILE_WIDTH;
         settings.frameheight = TILE_HEIGHT;
@@ -160,6 +162,17 @@ game.RangeTower = me.Entity.extend(
 });
 
 
+/*
+Class for a missile projectile entity used by the basic range attack tower entity
+
+Parameters:
+---x and y coordinates for the initial location of the missile on the map.
+---The GUID of the target entity that the missile will travel to.
+
+Note:
+melonJS documentation regarding the GUID value:
+http://melonjs.github.io/melonJS/docs/me.Renderable.html#.GUID
+*/
 game.Missile = me.Entity.extend({
     init : function (x, y, settings, targetGUID)
 	{
@@ -321,6 +334,13 @@ game.Missile = me.Entity.extend({
 });
 
 
+/*
+Class for a ground decal entity that is placed at a location where a missile entity hits a static position
+marker entity instead of an enemy target entity (a "skeleton" entity).
+
+Parameters:
+---x and y coordinates for the location of the ground decal on the map.
+*/
 game.GroundDecal = me.Entity.extend(
 {
     init: function (x, y, settings)
