@@ -24,6 +24,7 @@ game.TitleScreen = me.Stage.extend({
     me.input.bindKey(me.input.KEY.ENTER, "enter", true);
     me.input.bindPointer(me.input.pointer.LEFT, me.input.KEY.ENTER);
 	me.input.bindKey(me.input.KEY.SPACE, "space", true);
+	me.input.bindKey(me.input.KEY.C, "cKey", true);
 
 	// Begin the game if enter is pressed or there is a left click
     this.handler = me.event.subscribe(me.event.KEYDOWN, function (action, keyCode, edge) {
@@ -33,6 +34,9 @@ game.TitleScreen = me.Stage.extend({
 	  if (action === "space") {
 		me.state.change(me.state.SETTINGS);
 	  }
+	  if (action === "cKey") {
+		me.state.change(me.state.CREDITS);
+	  }
     });
   },
 
@@ -41,6 +45,6 @@ game.TitleScreen = me.Stage.extend({
     me.input.unbindKey(me.input.KEY.SPACE);
     me.input.unbindPointer(me.input.pointer.LEFT);
     me.event.unsubscribe(this.handler);
-	me.audio.stop("Soliloquy")
+	me.audio.stop("Soliloquy");
   }
 });

@@ -15,7 +15,7 @@ game.InstructionScreen = me.Stage.extend({
 	
 	// Play a music track, fading in
 	me.audio.play("Woodland Fantasy", true, null, 0.0);
-	me.audio.fade("Woodland Fantasy", 0.0, 1.0, 5000)
+	me.audio.fade("Woodland Fantasy", 0.0, 1.0, 5000);
 
 	// Set and scale the image for the initial screen
 	var instructionsImage = new me.Sprite(0, 0, {
@@ -66,6 +66,6 @@ game.InstructionScreen = me.Stage.extend({
     me.input.unbindKey(me.input.KEY.SPACE);
     me.input.unbindKey(me.input.KEY.BACKSPACE);
     me.event.unsubscribe(this.handler);
-	me.audio.stop("Woodland Fantasy")
+	me.audio.stop("Woodland Fantasy");
   }
 });
