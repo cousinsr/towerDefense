@@ -292,44 +292,68 @@ game.Bomb = me.Entity.extend({
 				if (targetDistance <= this.explosionRadius) {
 					// Lower the health of the target.
 					game.data.enemies[i].health -= this.damage;
+					
+					// Set a position for the explosion effect that is offset from the target.
+					// The position of the effect relative to the target is offset instead of being
+					// placed directly on the target because we have not yet found a solution for the
+					// bug where sometimes effects are placed below (obscured by) the target.
+					var xOffset = 0;
+					var yOffset = 0;
+					var positionOffset = Math.floor(Math.random() * 8);
+					
+					// Set the position offset of the stun effect from the target.
+					switch (positionOffset) {
+						// East of target.
+						case 0:
+							xOffset = TILE_WIDTH * 0.5;
+							yOffset = 0;
+							break;
+						// West of target.
+						case 1:
+							xOffset = TILE_WIDTH * -0.5;
+							yOffset = 0;
+							break;
+						// North of target.
+						case 2:
+							xOffset = 0;
+							yOffset = TILE_WIDTH * -0.5;
+							break;
+						// South of target.
+						case 3:
+							xOffset = 0;
+							yOffset = TILE_WIDTH * 0.5;
+							break;
+						// Southeast of target.
+						case 4:
+							xOffset = TILE_WIDTH * 0.5;
+							yOffset = TILE_WIDTH * 0.5;
+							break;
+						// Southwest of target.
+						case 5:
+							xOffset = TILE_WIDTH * -0.5;
+							yOffset = TILE_WIDTH * 0.5;
+							break;
+						// Northeast of target.
+						case 6:
+							xOffset = TILE_WIDTH * 0.5;
+							yOffset = TILE_WIDTH * -0.5;
+							break;
+						// Northwest of target.
+						case 7:
+							xOffset = TILE_WIDTH * -0.5;
+							yOffset = TILE_WIDTH * -0.5;
+					}
+					
 					// Have the target flicker if it is still alive, and apply an effect to the target.
 					if (game.data.enemies[i].health > 0) {
 						game.data.enemies[i].renderable.flicker(1000);
-						// Generate an effect on the target.
+						
+						// Generate an effect near the target.
 						me.game.world.addChild(
 								me.pool.pull("explosionEffect",
 								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
 								{width: TILE_WIDTH, height: TILE_HEIGHT}, game.data.enemies[i].GUID,
-								0, 0, 1000)
-						);
-						// Generate effects around the target.
-						// Left of target.
-						me.game.world.addChild(
-								me.pool.pull("explosionEffect",
-								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, game.data.enemies[i].GUID,
-								-1 * TILE_WIDTH / 2, 0, 1000)
-						);
-						// Right of target.
-						me.game.world.addChild(
-								me.pool.pull("explosionEffect",
-								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, game.data.enemies[i].GUID,
-								TILE_WIDTH / 2, 0, 1000)
-						);
-						// Above the target.
-						me.game.world.addChild(
-								me.pool.pull("explosionEffect",
-								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, game.data.enemies[i].GUID,
-								0, -1 * TILE_HEIGHT / 2, 1000)
-						);
-						// Below the target.
-						me.game.world.addChild(
-								me.pool.pull("explosionEffect",
-								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, game.data.enemies[i].GUID,
-								0, TILE_HEIGHT / 2, 1000)
+								xOffset, yOffset, 1000)
 						);
 					// The target died, so place an effect at its current position.
 					} else {
@@ -338,40 +362,12 @@ game.Bomb = me.Entity.extend({
 						var effectLifetime = 1000 *
 							(this.explosionRadius - targetDistance) / this.explosionRadius;
 						
-						// Generate an effect on the target.
+						// Generate an effect near the target.
 						me.game.world.addChild(
 								me.pool.pull("explosionEffect",
 								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, null, 0, 0, effectLifetime)
-						);
-						// Generate effects around the target.
-						// Left of target.
-						me.game.world.addChild(
-								me.pool.pull("explosionEffect",
-								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, null,
-								-1 * TILE_WIDTH / 2, 0, effectLifetime)
-						);
-						// Right of target.
-						me.game.world.addChild(
-								me.pool.pull("explosionEffect",
-								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, null,
-								TILE_WIDTH / 2, 0, effectLifetime)
-						);
-						// Above the target.
-						me.game.world.addChild(
-								me.pool.pull("explosionEffect",
-								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, null,
-								0, -1 * TILE_HEIGHT / 2, effectLifetime)
-						);
-						// Below the target.
-						me.game.world.addChild(
-								me.pool.pull("explosionEffect",
-								game.data.enemies[i].pos.x, game.data.enemies[i].pos.y,
-								{width: TILE_WIDTH, height: TILE_HEIGHT}, null,
-								0, TILE_HEIGHT / 2, effectLifetime)
+								{width: TILE_WIDTH, height: TILE_HEIGHT}, null, xOffset, yOffset,
+								effectLifetime)
 						);
 					}
 				}
