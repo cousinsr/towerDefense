@@ -14,20 +14,20 @@
  * 
  ********************************************************************/
 game.WaveManager = me.Entity.extend({
-    init: function (level_comp, idx) {
+    init: function (enemies, counts, timeGaps) {
         // Call the parent constructor
         this._super(me.Entity, 'init', [0, 0, {width: 16, height: 16}]);
         // Set beginning of level attributes 
         this.wave = 1;
 		// Set information for the waves in the current level
         this.numWaves = 10;
-		this.enemies = level_comp[idx].enemies;
-		this.counts = level_comp[idx].counts;
-		this.gaps = level_comp[idx].timeGaps;
+		this.enemies = enemies;
+		this.counts = counts;
+		this.gaps = timeGaps;
         this.spawnPoints = me.game.world.getChildByProp("name", "Start");
         // Set attributes to track the status of waves and the level
-		this.enemiesRemaining = level_comp[idx].counts[idx];
-		this.timeBeforeNextEnemy = level_comp[idx].timeGaps[idx] * 1000;
+		this.enemiesRemaining = counts[0];
+		this.timeBeforeNextEnemy = timeGaps[0] * 1000;
 		this.startOfWave = true;
 		this.waitingForNextLevel = false;
 		this.resetAudio = true;
