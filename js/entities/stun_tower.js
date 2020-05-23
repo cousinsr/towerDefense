@@ -1,12 +1,13 @@
+/*
+Class for a stun attack tower entity
+
+Parameters:
+---x and y coordinates for the location of the tower on the map.
+*/
 game.StunTower = me.Entity.extend(
 {
     init: function (x, y, settings)
     {
-        // Update settings:
-        //  - tower image
-        //  - client (tile) height/width
-        // NOTE - the current image in /data/img/towers is a placeholder
-        // and will need to be replaced.
         settings.image = "NihilAce-pack_4_stunTowerSnip";
         settings.framewidth = TILE_WIDTH;
         settings.frameheight = TILE_HEIGHT;
@@ -192,6 +193,20 @@ game.StunTower = me.Entity.extend(
 });
 
 
+/*
+Class for a stun effect entity used by the stun attack tower entity
+
+Parameters:
+---x and y coordinates for the initial location of the effect on the map.
+---The GUID of the target entity that the effect will be placed near to, if any.
+---The horizontal and vertical positional offset distance to shift the effect relative to its location.
+This positional offset is used to help ensure the effect is always visible near its intended target since
+there is an unsolved bug where effects placed directly on a target are sometimes not visible.
+
+Note:
+melonJS documentation regarding the GUID value:
+http://melonjs.github.io/melonJS/docs/me.Renderable.html#.GUID
+*/
 game.StunEffect = me.Entity.extend(
 {
     init: function (x, y, settings, targetGUID, xOffset, yOffset)

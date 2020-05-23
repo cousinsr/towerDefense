@@ -196,6 +196,14 @@ game.QuitButton = me.GUI_Object.extend({
 	}
 });
 
+
+/*
+Class for a game audio mute and unmute button entity
+
+Parameters:
+---x and y coordinates for the location of the button in the screen.
+---The PauseButton entity that created this MuteButton entity.
+*/
 game.MuteButton = me.GUI_Object.extend({
     init: function (x, y, settings, pause) {
         settings.image = "muteUnmuteAudio";

@@ -75,6 +75,7 @@ game.HUD.LifeItem = me.Renderable.extend({
 			me.state.change(me.state.GAMEOVER);
 		}
 		// Change font color to red if the player has 3 lives or less remaining.
+		// Note: The font color change will only be visible when the game is rendered using WebGL.
 		else if (game.data.life <= 3) {
 			this.tint = new me.Color(255, 0, 0);
 		}

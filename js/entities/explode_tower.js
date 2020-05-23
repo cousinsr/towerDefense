@@ -6,6 +6,13 @@ necessary modifications added for correct functionality in this game.
 https://www.html5gamedevs.com/topic/34225-shooting-projectiles-in-a-specific-direction/
 */
 
+
+/*
+Class for an explosion attack tower entity
+
+Parameters:
+---x and y coordinates for the location of the tower on the map.
+*/
 game.ExplodeTower = me.Entity.extend(
 {
     init: function (x, y, settings)
@@ -137,6 +144,20 @@ game.ExplodeTower = me.Entity.extend(
 });
 
 
+/*
+Class for a static position marker entity that is placed at a location where a projectile entity is
+intended to travel to. In other words, this entity is a static target for a projectile entity.
+This entity is used by the RangeTower entities' projectiles when their initially assigned enemy targets
+cease to exist before they reach them. All projectiles of the ExplodeTower entities are set to travel to
+PositionMarker entities.
+
+Parameters:
+---x and y coordinates for the location of the static position marker on the map.
+
+Note:
+This entity uses an image that is by default set to be invisible. For debugging purposes that invisibility
+can be disabled when the developer needs to see where a PositionMarker entity is placed on the map.
+*/
 game.PositionMarker = me.Entity.extend(
 {
     init: function (x, y, settings)
@@ -176,6 +197,18 @@ game.PositionMarker = me.Entity.extend(
 });
 
 
+/*
+Class for a bomb projectile entity used by the explosion attack tower entity
+
+Parameters:
+---x and y coordinates for the initial location of the missile on the map.
+---The GUID of the target entity that the missile will travel to.
+---The radius of the explosion damage range of the bomb.
+
+Note:
+melonJS documentation regarding the GUID value:
+http://melonjs.github.io/melonJS/docs/me.Renderable.html#.GUID
+*/
 game.Bomb = me.Entity.extend({
     init : function (x, y, settings, targetGUID, explosionRadius)
 	{
@@ -381,6 +414,21 @@ game.Bomb = me.Entity.extend({
 });
 
 
+/*
+Class for an explosion effect entity used by the explosion attack tower entity
+
+Parameters:
+---x and y coordinates for the initial location of the effect on the map.
+---The GUID of the target entity that the effect will be placed near to, if any.
+---The horizontal and vertical positional offset distance to shift the effect relative to its location.
+This positional offset is used to help ensure the effect is always visible near its intended target since
+there is an unsolved bug where effects placed directly on a target are sometimes not visible.
+---The duration of this effect in milliseconds.
+
+Note:
+melonJS documentation regarding the GUID value:
+http://melonjs.github.io/melonJS/docs/me.Renderable.html#.GUID
+*/
 game.ExplosionEffect = me.Entity.extend(
 {
     init: function (x, y, settings, targetGUID, xOffset, yOffset, lifetime)

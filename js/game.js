@@ -107,10 +107,6 @@ var game = {
 		// Add button objects
         me.pool.register("PauseButton", game.PauseButton);
         me.pool.register("IntroButton", game.IntroButton);
-		
-        // Enable the keyboard for the tower attack target POC.
-        me.input.bindKey(me.input.KEY.SPACE,  "shoot", true);
-        me.input.unbindKey(me.input.KEY.SPACE);
 
         // Start the intro screen
         me.state.change(INTRO);
