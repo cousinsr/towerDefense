@@ -53,6 +53,7 @@ var game = {
 		me.state.set(INTRO, new game.IntroScreen());
         me.state.set(me.state.MENU, new game.TitleScreen());
         me.state.set(me.state.SETTINGS, new game.InstructionScreen());
+		me.state.set(me.state.CREDITS, new game.CitationsScreen());
         me.state.set(me.state.PLAY, new game.PlayScreen());
         me.state.set(me.state.READY, new game.NextLevelScreen());
 		me.state.set(RESTART, new game.RestartScreen());

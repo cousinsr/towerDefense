@@ -28,6 +28,7 @@ module.exports = function(grunt) {
           'js/entities/pause_buttons.js',
           'js/screens/title.js',
           'js/screens/instructions.js',
+          'js/screens/citations.js',
           'js/screens/play.js',
           'js/screens/nextLevel.js',
           'js/screens/gameOver.js',
