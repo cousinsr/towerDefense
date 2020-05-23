@@ -3,10 +3,21 @@
  ********************************************************************/
 game.PauseButton = me.GUI_Object.extend({
     init: function (x, y, settings) {
-        settings.image = "pause";
-        settings.framewidth = TILE_WIDTH;
-        settings.frameheight = TILE_HEIGHT;
+        settings.image = "pausePlay";
+        settings.framewidth = settings.width = TILE_WIDTH;
+        settings.frameheight = settings.height = TILE_HEIGHT;
         this._super(me.GUI_Object, 'init', [x, y , settings]);
+		
+		// Set available button appearances.
+		this.addAnimation("play", [0]);
+		this.addAnimation("pause", [1]);
+		// Set initial appearance of button depending on value of game.data.isPaused .
+		if (game.data.isPaused) {
+			this.setCurrentAnimation("play");
+		} else {
+			this.setCurrentAnimation("pause");
+		}
+		
 		this.setOpacity(0.5);
 		this.menuButtons = [];
     },
@@ -53,6 +64,14 @@ game.PauseButton = me.GUI_Object.extend({
 				me.audio.unmuteAll();
 			}
 		}
+		
+		// Update the button depending on value of game.data.isPaused .
+		if (game.data.isPaused) {
+			this.setCurrentAnimation("play");
+		} else {
+			this.setCurrentAnimation("pause");
+		}
+		
         return false;
     }
 });
@@ -92,6 +111,8 @@ game.ResumeButton = me.GUI_Object.extend({
 			// Unmute all game sounds.
 			me.audio.unmuteAll();
 		}
+		
+		this.pause.setCurrentAnimation("pause");
 		
 		return false;
 	}
