@@ -1,9 +1,18 @@
-// TowerNode GUI Object
+/********************************************************************
+ * Classes for 'unselected' and 'selected' Tower node GUI objects.
+ *
+ * Parameters:
+ *   - x and y are the (x, y) coordinates where the object will be created.
+ *
+ * This object is created/destroyed from the play.js events.
+ * Tower types and costs are found in constants.js.
+ ********************************************************************/
 game.TowerNode = me.GUI_Object.extend(
 {
     // constructor:
     init: function (x, y)
     {
+        // Initialize to a 64x64 'unselected' node image.
         var settings = {};
         settings.image = "towerNode";
         settings.framewidth = TILE_WIDTH;
@@ -12,27 +21,35 @@ game.TowerNode = me.GUI_Object.extend(
         this._super(me.GUI_Object, "init", [x, y, settings]);
         this.anchorPoint.set(0,0);
 
-        // set tower node properties for displaying tower menu and replacing node.
+        // set tower node properties to integrate with tower menu.
         this.name = "TowerNode";
         this.x = x;
         this.y = y;
         this.selected = false;
-        this.locked = false;
+        this.placed = false;
+
+        // A 'unselected' tower node is always the parent tower.
+        // Current tower will be unselected, selected, or a placed tower. 
         this.parentTower = this;
         this.currentTower = this;
     },
 
-    // Change to selected tower object if a tower hasn't already been placed.
+    // If a tower node is clicked, it is either being selected for 1) selling,
+    // 2) buying or 3) changing back to unselected.
     onClick: function (event)
     {
-		if (!game.data.isPaused) {
+        if (!game.data.isPaused)
+        {
             // Check if any other tower nodes are already selected.
+            // If there are any, they need to be unselected before selecting a tower.
             var towerNodes = me.game.world.getChildByName("TowerNode");
             for (var i = 0; i < towerNodes.length; i++)
                 if (towerNodes[i].selected)
                 {
                     towerNodes[i].selected = false;
                     // Remove the selected tower node, if the node doesn't have a tower.
+                    // If a node with a tower has been selected, the sellTower property
+                    // will be true.
                     if (game.data.sellTower == false)
                     {
                         me.game.world.removeChild(towerNodes[i].currentTower);
@@ -40,18 +57,21 @@ game.TowerNode = me.GUI_Object.extend(
                     }
                 }
 
-            // If this node is locked, select to sell tower.
-            if (this.locked == true)
+            // If a tower has been placed on this node, then the node has been 
+            // selected for selling. Change the sellTower property to true.
+            if (this.placed == true)
             {
                 this.selected = true;
                 game.data.sellTower = true;
             }
 
-            // The node is not locked so select it if there is enough gold to purchase a tower.
+            // The node does not have a tower placed so it was selected for buying a
+            // tower. Change to a 'selected' node if there is enough gold to purchase
+            // the cheapest tower.
             else 
             {
                 game.data.sellTower = false;
-                if (game.data.gold >= TOWER_COST_RANGE)
+                if (game.data.gold >= TOWER_MIN_COST)
                 {
                     // Select the existing tower.
                     this.selected = true;
@@ -60,6 +80,7 @@ game.TowerNode = me.GUI_Object.extend(
                 }
             }
         }
+
         // don't propagate the event
         return false;
     }
@@ -70,6 +91,7 @@ game.TowerSelectedNode = me.GUI_Object.extend(
     // constructor:
     init: function (x, y, parentTower)
     {
+        // Initialize to a 64x64 'selected' node image.
         var settings = {};
         settings.image = "selectedNode";
         settings.framewidth = TILE_WIDTH;
@@ -83,15 +105,17 @@ game.TowerSelectedNode = me.GUI_Object.extend(
         this.x = x;
         this.y = y;
         this.selected = true;
-        this.locked = false;
+        this.placed = false;
         this.parentTower = parentTower;
         this.currentTower = this;
     },
 
-    // Change back to tower node object if a tower hasn't already been placed.
+    // Change back to 'unselected' tower node object if a tower hasn't already been placed.
     onClick: function (event)
     {
-        if (this.locked == false && !game.data.isPaused) 
+        // The node does not have a tower placed on it so it was selected to 'unselect' it.
+        // Change to a 'unselected' node.
+        if (this.placed == false && !game.data.isPaused) 
         {
             this.parentTower.selected = false;
             me.game.world.removeChild(this);

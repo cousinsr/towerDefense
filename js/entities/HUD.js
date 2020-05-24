@@ -137,9 +137,6 @@ game.HUD.GoldItem = me.Renderable.extend(
         this.font.textAlign = "right";
         this.font.textBaseline = "bottom";
 
-        // Set the font color to red (not currently working)
-        // this.tint = new me.Color(255, 0, 0);
-
         // Local copy of the global gold
         this.gold = -1;
     },
@@ -180,9 +177,6 @@ game.HUD.LevelItem = me.Renderable.extend(
         // Align the font to the right and bottom of the screen
         this.font.textAlign = "right";
         this.font.textBaseline = "bottom";
-
-        // Set the font color to red (not currently working)
-        // this.tint = new me.Color(255, 0, 0);
 
         // Local copy of the global level
         this.level = -1;

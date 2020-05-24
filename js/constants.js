@@ -16,11 +16,12 @@ var TOWER_COST_RANGE = 50;
 var TOWER_COST_STUN = 50;
 var TOWER_COST_EXPLODE = 100;
 var TOWER_SELL_RATE = 0.5;
+var TOWER_MIN_COST = 50;
 
 // Enemy's death gold reward:
-var ENEMY_GOLD_CLOTHED = 4;
-var ENEMY_GOLD_ROBED = 8;
-var ENEMY_GOLD_ARMORED = 12;
+var ENEMY_GOLD_CLOTHED = 3;
+var ENEMY_GOLD_ROBED = 6;
+var ENEMY_GOLD_ARMORED = 9;
 
 // Gold values
 var START_GOLD = 100;

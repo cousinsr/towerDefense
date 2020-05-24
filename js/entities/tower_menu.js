@@ -1,4 +1,14 @@
-// Tower menu option
+/********************************************************************
+ * Class for a Tower menu button
+ *
+ * Parameters:
+ *   - x and y are the (x, y) coordinates where the object will be created.
+ *   - tower type is range, stun, explode, or sell types.
+ *   - tower cost is how much the type of tower costs to build.
+ *
+ * This object is created/destroyed from the play.js events.
+ * Tower types and costs are found in constants.js.
+ ********************************************************************/
 game.TowerMenuItem = me.GUI_Object.extend(
 {
     // constructor:
@@ -10,16 +20,13 @@ game.TowerMenuItem = me.GUI_Object.extend(
         settings.framewidth = TILE_WIDTH;
         this._super(me.GUI_Object, "init", [x, y, settings]);
 
-        // set button images
+        // set button images from 'towerMenu' sprite
         this.addAnimation("button", [towerType-1]);
         this.addAnimation("confirm", [4]);
         this.addAnimation("cancel", [5]);
-        if (towerType == TOWER_MENU_SELL)
-            this.setCurrentAnimation("cancel");
-        else
-            this.setCurrentAnimation("button");
+        this.setCurrentAnimation("cancel");
 
-        // set button properties
+        // initialize button properties
         this.isClickable = false;
         this.confirm = false;
         this.towerType = towerType;
@@ -28,6 +35,7 @@ game.TowerMenuItem = me.GUI_Object.extend(
 
     onOut: function (event) 
     {
+        // button was not double clicked:
         this.confirm = false;
         return false;
     },
@@ -35,14 +43,13 @@ game.TowerMenuItem = me.GUI_Object.extend(
     onClick: function (event)
     {
         // single click:
-        if (this.confirm == false && !game.data.isPaused) {
+        if (this.confirm == false && !game.data.isPaused)
             this.confirm = true;
 
         // double click:
-        }
         else if (!game.data.isPaused)
         {
-            // Find the selected tower node
+            // Find the coordintaes of the selected tower node for selling/buying a tower.
             var towerNodes = me.game.world.getChildByName("TowerNode");
             var tower = null;
             var x = 0;
@@ -60,7 +67,7 @@ game.TowerMenuItem = me.GUI_Object.extend(
             // A selected tower node has been found.
             if (x > 0) 
             {
-                // Selling tower 
+                // Tower is being sold: 
                 if (this.towerType == TOWER_MENU_SELL)
                 {
                     // Update global game variables.
@@ -70,17 +77,19 @@ game.TowerMenuItem = me.GUI_Object.extend(
 
                     // Remove tower.
                     tower.selected = false;
-                    tower.locked = false;
+                    tower.placed = false;
                     me.game.world.removeChild(tower.currentTower);
                 }
                 else if (this.towerCost <= game.data.gold)
                 {
-                    // Add tower since it is affordable.
+                    // Tower is being bought since it is affordable.
+                    // Remove the selected tower node before adding new tower.
                     tower.selected = false;
-                    tower.locked = true;
+                    tower.placed = true;
                     me.game.world.removeChild(tower.currentTower);
                     me.audio.play("Plop");
 
+                    // Add tower that is being bought:
                     if (this.towerType == TOWER_MENU_RANGE)
                         tower.currentTower = me.game.world.addChild(
                             new game.RangeTower(x, y, {width: TILE_WIDTH, height: TILE_HEIGHT}));
@@ -105,14 +114,17 @@ game.TowerMenuItem = me.GUI_Object.extend(
 
     update: function ()
     {
+        // Update button image and clickable properties based on game's state.
         if (this.confirm == true) 
         {
+            // Button was single clicked; change to checkbox for double click.
             this.setCurrentAnimation("confirm");
             this.isClickable = true;
         }
         else if (this.towerType == TOWER_MENU_SELL)
         {
-            if (game.data.sellTower == true)
+            // Change sell button to dollar sign if this isn't wave 10.
+            if (game.data.sellTower == true && game.data.wave < 10)
             {
                 this.setCurrentAnimation("button");
                 this.isClickable = true;
@@ -125,6 +137,7 @@ game.TowerMenuItem = me.GUI_Object.extend(
         }
         else if (this.towerCost <= game.data.gold)
         {
+            // Change button to buy image if there is enough gold to buy the tower.
             this.setCurrentAnimation("button");
             this.isClickable = true;
         }

@@ -8,25 +8,25 @@ var game = {
 
     // Global game information
     data : {
-        // Player life balance
+        // HUD: Player life balance
         life: START_LIFE,
-        // Wave count
+        // HUD: Wave count
         wave: 0,
-        // Player gold balance
+        // HUD: Player gold balance
         gold: START_GOLD,
-        // Current level
+        // HUD: Current level
         level: 0,
-        // Tower selected for selling
+        // Tower node/menu: selected for selling
         sellTower: false,
         // Track data as of the start of the most recent level reached.
         // Player life balance
         lastStartingLife: START_LIFE,
         // Player gold balance
         lastStartingGold: START_GOLD,
-		// Pause tracker
-		isPaused: false,
-		// Mute audio tracker
-		isMuted: false,
+        // Pause tracker
+        isPaused: false,
+        // Mute audio tracker
+        isMuted: false,
         // Enemy arrays
         enemies: [],
         dyingEnemies: []
@@ -50,15 +50,16 @@ var game = {
 
     // Run on game resources loaded.
     "loaded" : function () {
-		me.state.set(INTRO, new game.IntroScreen());
+        // Add all game screens.
+        me.state.set(INTRO, new game.IntroScreen());
         me.state.set(me.state.MENU, new game.TitleScreen());
         me.state.set(me.state.SETTINGS, new game.InstructionScreen());
-		me.state.set(me.state.CREDITS, new game.CitationsScreen());
+        me.state.set(me.state.CREDITS, new game.CitationsScreen());
         me.state.set(me.state.PLAY, new game.PlayScreen());
         me.state.set(me.state.READY, new game.NextLevelScreen());
-		me.state.set(RESTART, new game.RestartScreen());
-		me.state.set(me.state.GAMEOVER, new game.GameOverScreen());
-		me.state.set(me.state.GAME_END, new game.GameEndScreen());
+        me.state.set(RESTART, new game.RestartScreen());
+        me.state.set(me.state.GAMEOVER, new game.GameOverScreen());
+        me.state.set(me.state.GAME_END, new game.GameEndScreen());
 
         // Add the enemy skeleton objects to the entity pool
         me.pool.register("Skeleton", game.Skeleton);
@@ -100,11 +101,11 @@ var game = {
         // Add the spawn point and finishing zone to the game
         me.pool.register("Start", game.Start);
         me.pool.register("Finish", game.Finish);
-		
-		// Add the object for deciding whether to turn or not
+
+        // Add the object for deciding whether to turn or not
         me.pool.register("DecisionPoint", game.DecisionPoint);
 
-		// Add button objects
+        // Add button objects
         me.pool.register("PauseButton", game.PauseButton);
         me.pool.register("IntroButton", game.IntroButton);
 
@@ -112,16 +113,3 @@ var game = {
         me.state.change(INTRO);
     }
 };
-
-game.functions =
-{
-    //remove all menu objects
-    removeMenu: function(childName)
-    {
-        var menuObjects = me.game.world.getChildByName(childName);
-
-        // Remove objects from world
-        for (var i = 0; i < menuObjects.length; i++)
-            me.game.world.removeChild(menuObjects[i]);
-    }
-}
