@@ -237,7 +237,7 @@ game.Bomb = me.Entity.extend({
 		this.body.gravity.set(0,0);
 
 		this.damage = 4;
-		this.hit = null;
+		this.hit = [];
 
 		// Set the projectile target and initial rotation (towards target) status.
 		this.positionMarkerTarget = me.game.world.getChildByGUID(targetGUID);
@@ -322,7 +322,8 @@ game.Bomb = me.Entity.extend({
 				);
 				
 				// Check if the target is within the bomb's explosion radius.
-				if (targetDistance <= this.explosionRadius) {
+				if (targetDistance <= this.explosionRadius & !this.hit.includes(game.data.enemies[i])) {
+					this.hit.push(game.data.enemies[i]);
 					// Lower the health of the target.
 					game.data.enemies[i].health -= this.damage;
 					
