@@ -46,7 +46,7 @@ game.PlayScreen = me.Stage.extend({
         else if (game.data.level == 1) {
             level.enemies = [c2CR, c2CA, c2CA, c3CCRA, c3CCRA, c2RRA, c2RRA, c3CRA, c3CRRA, c3CRRA];
             level.counts = [3, 3, 3, 3, 4, 4, 4, 5, 5, 5];
-            level.timeGaps = [3, 5, 7, 9, 11, 2, 2, 2, 2, 2];
+            level.timeGaps = [3, 5, 7, 9, 11, 4, 4, 4, 4, 4];
         }
 
         // Set composition of each wave for Level 03
@@ -59,8 +59,8 @@ game.PlayScreen = me.Stage.extend({
         // Set composition of each wave for Level 04
         else {
             level.enemies = [c1C, c2CCR, c2CRR, c3CRA, c2CCA, c2RA, c2RA, c3CRA, c3CRA, c3CRA];
-            level.counts = [2, 2, 3, 3, 4, 4, 5, 5, 6, 8];
-            level.timeGaps = [3, 10, 12, 12, 15, 15, 18, 18, 21, 25];
+            level.counts = [4, 4, 4, 4, 4, 6, 6, 6, 6, 8];
+            level.timeGaps = [3, 5, 5, 5, 5, 10, 10, 10, 10, 12];
         }
 
         // Load first level with a black background covering the default melonJS background
