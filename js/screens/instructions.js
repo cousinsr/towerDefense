@@ -11,7 +11,7 @@ game.InstructionScreen = me.Stage.extend({
 	// Set necessary variables to track which screen is being shown
 	var screenNum = 1;
 	var rewinds = 0;
-	var lastScreen = 5;
+	var lastScreen = 7;
 	
 	// Play a music track, fading in
 	me.audio.play("Woodland Fantasy", true, null, 0.0);
@@ -43,9 +43,9 @@ game.InstructionScreen = me.Stage.extend({
 			instructionsImage.scale(me.game.viewport.width / instructionsImage.width, me.game.viewport.height / instructionsImage.height);
 			me.game.world.addChild(instructionsImage, screenNum + rewinds * lastScreen); 
         }
-		// Begin the game after finishing the instructions
+		// Return to the title screen after finishing the instructions
         else if (action === "space") {
-            me.state.change(me.state.PLAY);
+            me.state.change(me.state.MENU);
         }
 		// Reset to the beginning of the instruction screen images, again increasing the z-position
 		if (action === "back" && screenNum == lastScreen) {
