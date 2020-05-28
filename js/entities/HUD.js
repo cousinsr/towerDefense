@@ -2,7 +2,7 @@
  * HUD for the information in the bottom right portion of the menu.
  * Each piece of information is a child of the container.
  * 
- * CITATION: This code is very similar to the code used for the MelonJS
+ * CITATION: This code draws many of its ideas from the MelonJS
  * platformer tutorial at http://melonjs.github.io/tutorial-platformer/
  *  
  ********************************************************************/

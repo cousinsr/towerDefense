@@ -1,7 +1,8 @@
 /********************************************************************
  * Play screen for the actual game
-
- * CITATION: This code is adapted from the MelonJS Boilerplate
+ *
+ * CITATION: This code is adapted from the MelonJS Boilerplate, but
+ * has significant alterations for our game.
  *
  ********************************************************************/
 

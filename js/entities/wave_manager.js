@@ -4,12 +4,11 @@
  * Parameters: enemies is a 2D array containing 10 arrays of strings
  * that determine the enemy pool being chosen from in each wave; counts
  * is an array of 10 integers for how many enemies are in each wave; 
- * gaps is an array of 10 integers signifying the number of seconds
- * between each wave; spawnPoints are available Start objects where
- * enemies may be spawned.
+ * timeGaps is an array of 10 integers signifying the number of seconds
+ * between each wave
  *
  * NOTE: All arrays go in order. enemies[0] is for the enemy composition 
- * for wave 1, counts[0] is for the enemy count for wave 1, and gaps[0]
+ * for wave 1, counts[0] is for the enemy count for wave 1, and timeGaps[0]
  * is for the number of seconds between the start and wave 1.
  * 
  ********************************************************************/
@@ -17,10 +16,10 @@ game.WaveManager = me.Entity.extend({
     init: function (enemies, counts, timeGaps) {
         // Call the parent constructor
         this._super(me.Entity, 'init', [0, 0, {width: 16, height: 16}]);
-        // Set beginning of level attributes 
+        // Set wave attributes
         this.wave = 1;
-		// Set information for the waves in the current level
         this.numWaves = 10;
+		// Set data pertaining to enemy composition
 		this.enemies = enemies;
 		this.counts = counts;
 		this.gaps = timeGaps;
@@ -32,14 +31,14 @@ game.WaveManager = me.Entity.extend({
 		this.waitingForNextLevel = false;
 		this.resetAudio = true;
 		this.levelCompleteCountdown = 3000;
-		// Reset the global variables
+		// Reset global variables for start of level
 		game.data.wave = 0;
 		game.data.enemies = [];
 		game.data.dyingEnemies = [];
     },
 	
     update : function (dt) {
- 
+		// Do nothing if the game is paused
 		if (game.data.isPaused) {
 			return true;
 		}
@@ -62,7 +61,7 @@ game.WaveManager = me.Entity.extend({
 				// Update timer and enemy count
 				this.timeBeforeNextEnemy = 1000;
 				this.enemiesRemaining -= 1;
-				// Choose a random enemy from the enemies available this wave
+				// Choose a random enemy from the enemies available for this wave
 				var numEnemyChoices = this.enemies[this.wave - 1].length;
 				var enemyChoice = Math.floor(Math.random() * numEnemyChoices);
 				if (enemyChoice >= numEnemyChoices) {
@@ -73,8 +72,10 @@ game.WaveManager = me.Entity.extend({
 				var spawnChoice = Math.floor(Math.random() * numSpawnChoices);
 				if (spawnChoice >= numSpawnChoices) {
 					spawnChoice = numSpawnChoices - 1;
-				} else if (game.data.level == 2 && this.wave < 9) {
-					spawnChoice = 1;			// only spawn second path for waves 9 and 10
+				}
+				// Only spawn second path for waves 9 and 10 in level 3
+				else if (game.data.level == 2 && this.wave < 9) {
+					spawnChoice = 1;
 				}
 				// Add the chosen enemy on one of three paths from the chosen spawn point
 				var randomNum = Math.floor(Math.random() * 3);
@@ -85,6 +86,7 @@ game.WaveManager = me.Entity.extend({
 											   this.spawnPoints[spawnChoice].pos.x,
 											   this.spawnPoints[spawnChoice].pos.y - (24 * randomNum));
 				me.game.world.addChild(newSkeleton);
+				// Ensure that the enemy is only added to the array once
 				if (!game.data.enemies.includes(newSkeleton)) {
 					game.data.enemies.push(newSkeleton);
 				}
@@ -111,7 +113,7 @@ game.WaveManager = me.Entity.extend({
 					if (game.data.level < TILE_LEVELS.length - 1) {
 						// Change to screen between levels
 						me.state.change(me.state.READY);
-					// The player has completed all levels in the game.
+					// The player has completed all levels in the game
 					} else {
 						// Show the game end (player victory) screen.
 						me.state.change(me.state.GAME_END);

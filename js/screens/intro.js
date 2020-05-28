@@ -1,3 +1,10 @@
+/********************************************************************
+ * Intro screen
+ *
+ * CITATION: This code is adapted from the code from the MelonJS
+ * platformer tutorial at http://melonjs.github.io/tutorial-platformer/
+ *
+ ********************************************************************/
 game.IntroScreen = me.Stage.extend({
 
     onResetEvent: function() {

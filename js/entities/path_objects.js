@@ -1,5 +1,5 @@
 /********************************************************************
- * The four classes below simply allow Tiled to include turn objects
+ * The five classes below simply allow Tiled to include turn objects
  * to be used to set up the path for skeleton entities to take through
  * the map in the game.
  ********************************************************************/

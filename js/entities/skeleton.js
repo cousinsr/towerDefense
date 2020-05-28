@@ -5,10 +5,12 @@
  * and y is the y position; skeletonImage is the name of a 64x64 sprite
  * sheet for this in /data/img/sprites; speed is the number of pixels
  * the entity will move in one second; health is an integer indicating
- * the number of life points the entity begins the game with.
+ * the number of life points the entity begins the game with; reward is
+ * the amount of gold for defeating the enemy; speedRange is an integer
+ * representing the range of speeds that an enemy could have
  *
  * This entity is used as a superclass for other skeleton entities,
- * which are the main enemies in the game.
+ * which are the enemies in the game.
  *
  * IMPORTANT NOTE: There must be another sprite sheet for the skeleton
  * death, and it must be named "hurt_" + the string passed in the
@@ -56,6 +58,7 @@ game.Skeleton = me.Entity.extend(
    },
 
     update : function (dt) {
+		// Do not update if the game is paused
 		if (game.data.isPaused) {
 			return true;
 		}

@@ -1,7 +1,7 @@
 /********************************************************************
  * Restart screen for when the player has chosen to restart the level
  *
- * CITATION: This code is heavily altered but still based on the
+ * CITATION: This code draws several ideas from the
  * MelonJS tutorial at http://melonjs.github.io/tutorial-platformer/
  *
  ********************************************************************/
