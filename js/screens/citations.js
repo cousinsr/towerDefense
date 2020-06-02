@@ -12,7 +12,7 @@ game.CitationsScreen = me.Stage.extend({
 	// Set necessary variables to track which screen is being shown
 	var screenNum = 1;
 	var rewinds = 0;
-	var lastScreen = 16;
+	var lastScreen = 17;
 	
 	// Play a looping music track.
 	me.audio.play("happy_adveture", true);
